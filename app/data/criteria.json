@@ -1,143 +1,143 @@
 [
  {
   "id": "slope_mean",
-  "group": "Teren",
-  "name": "Pantă medie",
+  "group": "Terrain",
+  "name": "Mean slope",
   "unit": "°",
   "decimals": 1,
   "weight": 1.0,
-  "description": "Media pantei terenului în fereastra de ~50 km, calculată pe un grid de ~3,7 km.",
-  "earth_source": "NOAA ETOPO1 (relief global), eșantionat la 2′ (~3,7 km)",
+  "description": "Average terrain slope across the ~50 km analysis window, computed on a ~3.7 km grid.",
+  "earth_source": "NOAA ETOPO1 global relief, sampled at 2′ (~3.7 km)",
   "target_source": {
-   "moon": "NASA LRO LOLA LDEM_75S_240M, mediat la ~3,6 km"
+   "moon": "NASA LRO LOLA LDEM_75S_240M, averaged to ~3.6 km"
   },
-  "why": "Pantele determină siguranța aterizării și deplasarea roverelor."
+  "why": "Slopes drive landing safety and rover mobility."
  },
  {
   "id": "slope_p90",
-  "group": "Teren",
-  "name": "Pantă abruptă (percentila 90)",
+  "group": "Terrain",
+  "name": "Steep slope (90th percentile)",
   "unit": "°",
   "decimals": 1,
   "weight": 1.0,
-  "description": "Valoarea sub care se află 90% din pante: arată cât de abrupte sunt cele mai dificile zone.",
+  "description": "Slope value that 90% of the window stays below: how steep the hardest terrain gets.",
   "earth_source": "NOAA ETOPO1, 2′",
   "target_source": {
-   "moon": "NASA LRO LOLA, ~3,6 km"
+   "moon": "NASA LRO LOLA, ~3.6 km"
   },
-  "why": "Zonele abrupte limitează mobilitatea și iluminarea."
+  "why": "Steep ground limits traverses and creates long shadows."
  },
  {
   "id": "relief",
-  "group": "Teren",
-  "name": "Relief local",
+  "group": "Terrain",
+  "name": "Local relief",
   "unit": "m",
   "decimals": 0,
   "weight": 1.0,
-  "description": "Diferența de altitudine dintre percentila 95 și percentila 5 în fereastra de ~50 km.",
+  "description": "Elevation range between the 5th and 95th percentile within the ~50 km window.",
   "earth_source": "NOAA ETOPO1, 2′",
   "target_source": {
-   "moon": "NASA LRO LOLA, ~3,6 km"
+   "moon": "NASA LRO LOLA, ~3.6 km"
   },
-  "why": "Masivele înalte (ca Malapert) au relief de mii de metri."
+  "why": "Massifs such as Malapert rise thousands of metres above their surroundings."
  },
  {
   "id": "roughness",
-  "group": "Teren",
-  "name": "Rugozitate",
+  "group": "Terrain",
+  "name": "Surface roughness",
   "unit": "m",
   "decimals": 0,
   "weight": 1.0,
-  "description": "Abaterea standard a altitudinii după eliminarea înclinării generale (a planului) ferestrei.",
+  "description": "Standard deviation of elevation after removing the window's best-fit plane (detrended).",
   "earth_source": "NOAA ETOPO1, 2′",
   "target_source": {
-   "moon": "NASA LRO LOLA, ~3,6 km"
+   "moon": "NASA LRO LOLA, ~3.6 km"
   },
-  "why": "Separă terenul neregulat (cratere, creste) de o simplă pantă uniformă."
+  "why": "Separates irregular terrain (craters, ridges) from a uniform tilt."
  },
  {
   "id": "t_mean",
-  "group": "Termic",
-  "name": "Temperatură medie anuală",
+  "group": "Thermal",
+  "name": "Mean annual temperature",
   "unit": "°C",
   "decimals": 1,
   "weight": 1.0,
-  "description": "Pământ: media anuală a temperaturii suprafeței (zi + noapte), 2020–2024. Luna: media anuală a temperaturii la 2 cm sub suprafață.",
-  "earth_source": "NASA MODIS Terra MOD11C3 v061 (temperatura suprafeței, lunar), 2020–2024",
+  "description": "Earth: mean annual land surface temperature (day and night), 2020–2024. Moon: mean annual temperature 2 cm below the surface.",
+  "earth_source": "NASA MODIS Terra MOD11C3 v061 land surface temperature, monthly, 2020–2024",
   "target_source": {
-   "moon": "NASA LRO Diviner – Polar Resource Product (temp_avg)"
+   "moon": "NASA LRO Diviner Polar Resource Product (temp_avg)"
   },
-  "why": "Regimul termic decide materialele, energia și stabilitatea gheții."
+  "why": "The thermal regime governs materials, power systems and ice stability."
  },
  {
   "id": "t_max",
-  "group": "Termic",
-  "name": "Temperatură maximă",
+  "group": "Thermal",
+  "name": "Maximum temperature",
   "unit": "°C",
   "decimals": 1,
   "weight": 1.0,
-  "description": "Pământ: temperatura de zi a suprafeței în cea mai caldă lună (media 2020–2024). Luna: temperatura maximă anuală a suprafeței.",
-  "earth_source": "NASA MODIS Terra MOD11C3 v061 (LST de zi), 2020–2024",
+  "description": "Earth: daytime land surface temperature of the warmest month (2020–2024 mean). Moon: annual maximum surface temperature.",
+  "earth_source": "NASA MODIS Terra MOD11C3 v061 daytime LST, 2020–2024",
   "target_source": {
-   "moon": "NASA LRO Diviner – Polar Resource Product (temp_max)"
+   "moon": "NASA LRO Diviner Polar Resource Product (temp_max)"
   },
-  "why": "Cât de cald devine cel mai cald moment al anului."
+  "why": "How warm the warmest part of the year gets."
  },
  {
   "id": "precip",
-  "group": "Mediu",
-  "name": "Precipitații anuale",
+  "group": "Environment",
+  "name": "Annual precipitation",
   "unit": "mm",
   "decimals": 0,
   "weight": 1.0,
-  "description": "Totalul anual al precipitațiilor, media 2020–2024. Pe Lună: 0.",
-  "earth_source": "NASA GPM IMERG Final 3IMERGM v07 (lunar), 2020–2024",
+  "description": "Total annual precipitation, 2020–2024 mean. Moon: 0.",
+  "earth_source": "NASA GPM IMERG Final 3IMERGM v07, monthly, 2020–2024",
   "target_source": {
-   "moon": "Valoare fizică: Luna nu are atmosferă, deci 0 mm"
+   "moon": "Physical value: no atmosphere, 0 mm"
   },
-  "why": "Ariditatea extremă e condiția de bază a unui analog lunar."
+  "why": "Extreme aridity is the baseline condition for a lunar analog."
  },
  {
   "id": "low_sun",
-  "group": "Iluminare",
-  "name": "Soare jos pe cer",
+  "group": "Illumination",
+  "name": "Low Sun angle",
   "unit": "%",
   "decimals": 0,
   "weight": 1.0,
-  "description": "Procentul din orele de zi ale anului în care Soarele e sub 10° deasupra orizontului.",
-  "earth_source": "Calcul astronomic după latitudine (înclinarea axei 23,44°)",
+  "description": "Share of daylight hours in a year when the Sun is less than 10° above the horizon.",
+  "earth_source": "Astronomical calculation by latitude (axial tilt 23.44°)",
   "target_source": {
-   "moon": "Calcul astronomic după latitudine (înclinarea axei Lunii 1,54°)"
+   "moon": "Astronomical calculation by latitude (lunar axial tilt 1.54°)"
   },
-  "why": "La polul sud lunar Soarele stă mereu razant: umbre lungi, o provocare pentru navigație și camere."
+  "why": "At the lunar south pole the Sun always grazes the horizon: long shadows challenge navigation and cameras."
  },
  {
   "id": "pressure",
-  "group": "Mediu",
-  "name": "Presiune atmosferică",
+  "group": "Environment",
+  "name": "Atmospheric pressure",
   "unit": "hPa",
   "decimals": 0,
   "weight": 0.5,
-  "description": "Pământ: estimată din altitudinea medie (atmosfera standard). Luna: practic vid (0 hPa).",
-  "earth_source": "Derivată din NOAA ETOPO1",
+  "description": "Earth: estimated from mean elevation (standard atmosphere). Moon: effectively vacuum (0 hPa).",
+  "earth_source": "Derived from NOAA ETOPO1 elevation",
   "target_source": {
-   "moon": "Valoare fizică: exosferă, ~0 hPa"
+   "moon": "Physical value: exosphere, ~0 hPa"
   },
-  "why": "Altitudinea mare apropie cel mai mult condițiile de presiune, deși niciun loc nu ajunge la vid."
+  "why": "High elevation gets closest to low-pressure conditions, though nowhere on Earth approaches vacuum."
  },
  {
   "id": "ice",
-  "group": "Resurse",
-  "name": "Gheață în sol",
+  "group": "Resources",
+  "name": "Ground ice",
   "unit": "",
   "decimals": 0,
   "weight": 0.5,
   "binary": true,
-  "description": "Luna: există teren unde gheața e stabilă la <1 m adâncime (Diviner). Pământ: permafrost probabil (temperatura medie anuală a suprafeței < −5 °C).",
-  "earth_source": "Aproximare din NASA MODIS MOD11C3 (temperatura medie < −5 °C)",
+  "description": "Moon: terrain where ice is stable within 1 m of the surface (Diviner). Earth: likely permafrost (mean annual surface temperature below −5 °C).",
+  "earth_source": "Proxy from NASA MODIS MOD11C3 (mean temperature below −5 °C)",
   "target_source": {
-   "moon": "NASA LRO Diviner – Polar Resource Product (ice_depth)"
+   "moon": "NASA LRO Diviner Polar Resource Product (ice_depth)"
   },
-  "why": "Gheața e resursa principală pentru o bază permanentă (apă, oxigen, combustibil)."
+  "why": "Ice is the key resource for a permanent base: water, oxygen and propellant."
  }
 ]

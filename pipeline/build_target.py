@@ -127,7 +127,12 @@ def main() -> None:
         w = lola_window(dem, t["lat"], t["lon"], t["window_km"])
         px = LOLA_SCALE * BLOCK
         ter = terrain_stats(w, px, px)
-        div = diviner_window(t["lat"], t["lon"], t["window_km"])
+        cache = RAW / f"diviner_{t['id']}_{t['window_km']}km.json"
+        if cache.exists():
+            div = json.loads(cache.read_text(encoding="utf8"))
+        else:
+            div = diviner_window(t["lat"], t["lon"], t["window_km"])
+            cache.write_text(json.dumps(div), encoding="utf8")
         print(f"  LOLA fereastra {w.shape}, Diviner {div['n']} triunghiuri")
 
         values = {
@@ -143,12 +148,12 @@ def main() -> None:
             "ice": 1 if div["ice_fraction"] > 0 else 0,
         }
         extra = {
-            "Altitudine medie (LOLA)": f"{ter['elev_mean']:.0f} m (față de raza de referință 1737,4 km)",
-            "Temperatură medie minimă în fereastră (Diviner)": f"{div['t_avg_K_min'] - 273.15:.0f} °C",
-            "Temperatură maximă – percentila 95 (Diviner)": f"{div['t_max_K_p95'] - 273.15:.0f} °C",
-            "Teren cu gheață stabilă la <1 m (Diviner)": f"{100 * div['ice_fraction']:.1f}% din fereastră",
-            "Triunghiuri Diviner folosite": str(div["n"]),
-            "Pixeli LOLA folosiți": f"{w.shape[0]}×{w.shape[1]} (fiecare ~{px / 1000:.1f} km)",
+            "Mean elevation (LOLA)": f"{ter['elev_mean']:,.0f} m above the 1,737.4 km reference radius",
+            "Coldest mean temperature in window (Diviner)": f"{div['t_avg_K_min'] - 273.15:.0f} °C",
+            "Maximum temperature, 95th percentile (Diviner)": f"{div['t_max_K_p95'] - 273.15:.0f} °C",
+            "Area with ice stable within 1 m (Diviner)": f"{100 * div['ice_fraction']:.1f}% of window",
+            "Diviner facets used": f"{div['n']:,}",
+            "LOLA cells used": f"{w.shape[0]} × {w.shape[1]} (each ~{px / 1000:.1f} km)",
         }
         out.append({**t, "values": values, "extra": extra, "limits": LIMITS["moon"]})
         for k, v in values.items():

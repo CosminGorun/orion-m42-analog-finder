@@ -3,12 +3,12 @@
     "id": "malapert_massif",
     "name": "Malapert Massif",
     "body": "moon",
-    "mission": "Artemis III – regiune candidată NASA (polul sud lunar)",
+    "mission": "Artemis III candidate landing region · lunar south pole",
     "lat": -86.0,
     "lon": 0.3,
     "window_km": 50,
-    "coord_source": "Centrul mozaicului LROC NAC_ROI_MALAPERT (−86,0°; 0,3°E)",
-    "notes": "Masiv muntos cu iluminare bună și vizibilitate spre Pământ.",
+    "coord_source": "Centre of LROC mosaic NAC_ROI_MALAPERT (86.0°S, 0.3°E)",
+    "notes": "Mountain massif with long periods of sunlight and good line of sight to Earth.",
     "info_url": "https://lroc.im-ldi.com/posts/1294"
   }
 ]

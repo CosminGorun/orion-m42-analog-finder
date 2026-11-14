@@ -3,12 +3,12 @@
   "id": "malapert_massif",
   "name": "Malapert Massif",
   "body": "moon",
-  "mission": "Artemis III – regiune candidată NASA (polul sud lunar)",
+  "mission": "Artemis III candidate landing region · lunar south pole",
   "lat": -86.0,
   "lon": 0.3,
   "window_km": 50,
-  "coord_source": "Centrul mozaicului LROC NAC_ROI_MALAPERT (−86,0°; 0,3°E)",
-  "notes": "Masiv muntos cu iluminare bună și vizibilitate spre Pământ.",
+  "coord_source": "Centre of LROC mosaic NAC_ROI_MALAPERT (86.0°S, 0.3°E)",
+  "notes": "Mountain massif with long periods of sunlight and good line of sight to Earth.",
   "info_url": "https://lroc.im-ldi.com/posts/1294",
   "values": {
    "slope_mean": 11.443226059789586,
@@ -23,42 +23,42 @@
    "ice": 1
   },
   "extra": {
-   "Altitudine medie (LOLA)": "1378 m (față de raza de referință 1737,4 km)",
-   "Temperatură medie minimă în fereastră (Diviner)": "-241 °C",
-   "Temperatură maximă – percentila 95 (Diviner)": "41 °C",
-   "Teren cu gheață stabilă la <1 m (Diviner)": "48.7% din fereastră",
-   "Triunghiuri Diviner folosite": "19206",
-   "Pixeli LOLA folosiți": "14×14 (fiecare ~3.6 km)"
+   "Mean elevation (LOLA)": "1,378 m above the 1,737.4 km reference radius",
+   "Coldest mean temperature in window (Diviner)": "-241 °C",
+   "Maximum temperature, 95th percentile (Diviner)": "41 °C",
+   "Area with ice stable within 1 m (Diviner)": "48.7% of window",
+   "Diviner facets used": "19,206",
+   "LOLA cells used": "14 × 14 (each ~3.6 km)"
   },
   "limits": [
    {
-    "name": "Gravitație",
-    "target": "1,62 m/s² (0,17 g)",
-    "earth": "9,81 m/s²"
+    "name": "Gravity",
+    "target": "1.62 m/s² (0.17 g)",
+    "earth": "9.81 m/s²"
    },
    {
-    "name": "Atmosferă",
-    "target": "vid (exosferă)",
-    "earth": "minimum ~330 hPa (vârful Everest)"
+    "name": "Atmosphere",
+    "target": "vacuum (exosphere)",
+    "earth": "at least ~330 hPa (summit of Everest)"
    },
    {
-    "name": "Radiații",
-    "target": "~1,4 mSv/zi, fără protecție",
-    "earth": "protejat de atmosferă și de câmpul magnetic"
+    "name": "Radiation",
+    "target": "~1.4 mSv/day, unshielded",
+    "earth": "shielded by atmosphere and magnetic field"
    },
    {
-    "name": "Regolit",
-    "target": "praf ascuțit, încărcat electrostatic",
-    "earth": "praf erodat de vânt și apă"
+    "name": "Regolith",
+    "target": "sharp, electrostatically charged dust",
+    "earth": "dust rounded by wind and water"
    },
    {
-    "name": "Cratere umbrite permanent",
-    "target": "până la −248 °C",
-    "earth": "nu există"
+    "name": "Permanently shadowed regions",
+    "target": "down to −248 °C",
+    "earth": "none"
    },
    {
-    "name": "Durata zilei",
-    "target": "~29,5 zile terestre",
+    "name": "Day length",
+    "target": "~29.5 Earth days",
     "earth": "24 h"
    }
   ]

@@ -1,64 +1,127 @@
 <!doctype html>
-<html lang="ro">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Analog Finder</title>
+  <meta name="description" content="Find places on Earth that resemble the landing sites of future Moon missions, scored on terrain, thermal, environment and illumination data from NASA.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%2312161b'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23e8a33d'/%3E%3Cellipse cx='16' cy='16' rx='13' ry='5' fill='none' stroke='%235cc96c' stroke-width='2' transform='rotate(-25 16 16)'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Fira+Sans:wght@400;500;600;700&display=swap">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>
+  <a class="skip" href="#map">Skip to map</a>
+
+  <header class="topbar">
     <div class="brand">
-      <span class="logo">◐</span>
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+        <circle cx="16" cy="16" r="7" fill="currentColor"/>
+        <ellipse cx="16" cy="16" rx="13" ry="5" fill="none" stroke="var(--seq-4)" stroke-width="2" transform="rotate(-25 16 16)"/>
+      </svg>
       <div>
         <h1>Analog Finder</h1>
-        <p>Zone de pe Pământ care seamănă cu locurile viitoarelor misiuni</p>
+        <p>Places on Earth that resemble future landing sites</p>
       </div>
     </div>
-    <label class="target-select">Țintă
-      <select id="target"></select>
-    </label>
+
+    <div class="toolbar" role="toolbar" aria-label="Map controls">
+      <label class="field">
+        <span>Target site</span>
+        <select id="target"></select>
+      </label>
+
+      <div class="field">
+        <span id="view-label">View</span>
+        <div class="segmented" id="view-modes" role="radiogroup" aria-labelledby="view-label">
+          <button role="radio" data-mode="similarity" aria-checked="true">Similarity</button>
+          <button role="radio" data-mode="top" aria-checked="false">Top sites</button>
+          <button role="radio" data-mode="criterion" aria-checked="false">By criterion</button>
+          <button role="radio" data-mode="robustness" aria-checked="false">Robustness</button>
+        </div>
+      </div>
+
+      <label class="field" id="criterion-field" hidden>
+        <span>Criterion</span>
+        <select id="criterion"></select>
+      </label>
+
+      <label class="field" id="top-field" hidden>
+        <span>Show</span>
+        <select id="top-share">
+          <option value="0.01">Top 1% of land</option>
+          <option value="0.05">Top 5% of land</option>
+          <option value="0.1">Top 10% of land</option>
+        </select>
+      </label>
+
+      <label class="field">
+        <span>Basemap</span>
+        <select id="basemap">
+          <option value="dark">Dark</option>
+          <option value="relief">Relief</option>
+          <option value="satellite">Satellite</option>
+        </select>
+      </label>
+    </div>
   </header>
 
-  <main>
-    <aside id="side">
-      <nav class="tabs">
-        <button data-tab="t-target" class="active">Ținta</button>
-        <button data-tab="t-criteria">Criterii</button>
-        <button data-tab="t-zones">Zone găsite</button>
-      </nav>
-
-      <section id="t-target" class="tab active"></section>
-
-      <section id="t-criteria" class="tab">
-        <p class="hint">Fiecare criteriu dă un scor 0–100% după cât de aproape e celula de țintă,
-          combinând <b>poziția în distribuția de pe Pământ</b> (percentile) cu <b>diferența reală de valoare</b>.
-          Ponderile de mai jos decid cât contează fiecare criteriu în scorul total.</p>
-        <div id="weights"></div>
-        <button id="reset-weights" class="ghost">Resetează ponderile</button>
+  <main class="layout">
+    <aside class="panel" aria-label="Analysis">
+      <section class="kpis" aria-label="Summary">
+        <div class="kpi"><span class="kpi-label">Best match</span><span class="kpi-value" id="kpi-best">—</span></div>
+        <div class="kpi"><span class="kpi-label">Candidate sites</span><span class="kpi-value" id="kpi-sites">—</span></div>
+        <div class="kpi"><span class="kpi-label">Land cells scored</span><span class="kpi-value" id="kpi-cells">—</span></div>
       </section>
 
-      <section id="t-zones" class="tab">
-        <div class="controls">
-          <label><input type="checkbox" id="only-new"> Doar locuri noi (ascunde zonele aflate la mai puțin de 300 km de un analog cunoscut)</label>
-          <label><input type="checkbox" id="show-known" checked> Arată analogii cunoscuți pe hartă</label>
-          <button id="stability">Testează stabilitatea (300 de combinații de ponderi)</button>
-          <p class="hint" id="stability-note"></p>
+      <nav class="tabs" role="tablist">
+        <button role="tab" data-tab="tab-sites" aria-selected="true">Candidate sites</button>
+        <button role="tab" data-tab="tab-target" aria-selected="false">Target profile</button>
+        <button role="tab" data-tab="tab-criteria" aria-selected="false">Weights</button>
+      </nav>
+
+      <section id="tab-sites" class="tab" role="tabpanel">
+        <div class="filters">
+          <label class="check"><input type="checkbox" id="only-new"> New sites only <small>(more than 300 km from a known analog site)</small></label>
+          <label class="check"><input type="checkbox" id="show-known" checked> Show known analog sites</label>
+          <label class="check"><input type="checkbox" id="show-ranks" checked> Number the top 10 on the map</label>
         </div>
-        <ol id="zones"></ol>
+        <ol id="sites" class="sites"></ol>
+      </section>
+
+      <section id="tab-target" class="tab" role="tabpanel" hidden></section>
+
+      <section id="tab-criteria" class="tab" role="tabpanel" hidden>
+        <p class="lede">Each criterion scores a cell from 0 to 100% by how close it is to the target. The score blends the cell's
+          <strong>percentile rank on Earth</strong> with the <strong>actual difference in value</strong>. Weights set how much each criterion counts.</p>
+        <div id="weights"></div>
+        <button id="reset-weights" class="btn btn-quiet" type="button">Reset weights</button>
       </section>
     </aside>
 
-    <div id="map-wrap">
-      <div id="map"></div>
-      <div class="legend">
-        <span>Similaritate</span>
-        <div class="bar"></div>
-        <div class="ticks"><span>scăzută</span><span>ridicată</span></div>
+    <div class="map-wrap">
+      <div id="map" tabindex="0" aria-label="World map of similarity scores"></div>
+      <div id="tooltip" class="tooltip" role="status" hidden></div>
+
+      <details class="legend" id="legend" open>
+        <summary class="legend-head">
+          <span class="legend-title" id="legend-title">Similarity to target</span>
+          <span class="legend-note" id="legend-note"></span>
+        </summary>
+        <ul class="legend-scale" id="legend-scale"></ul>
+        <div class="legend-known"><span class="dot-known"></span> Known analog site</div>
+        <label class="legend-opacity">Layer opacity
+          <input type="range" id="opacity" min="0.3" max="1" step="0.05" value="0.9">
+        </label>
+      </details>
+
+      <aside id="detail" class="detail" aria-label="Site details" hidden></aside>
+      <div id="loading" class="loading" role="status">
+        <div class="loading-bar"></div>
+        <span>Loading Earth grid and target profile…</span>
       </div>
-      <div id="detail" class="hidden"></div>
-      <div id="loading">Se încarcă datele…</div>
     </div>
   </main>
 
