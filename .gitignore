@@ -1,0 +1,19 @@
+# mediu Python
+.venv/
+__pycache__/
+*.pyc
+
+# date brute descărcate (se regenerează cu pipeline/fetch_*.py)
+raw/
+*.part
+
+# secrete – NU se publică niciodată
+.earthdata_token
+.env
+
+# configurări locale
+.claude/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

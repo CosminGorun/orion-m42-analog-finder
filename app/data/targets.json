@@ -1,0 +1,66 @@
+[
+ {
+  "id": "malapert_massif",
+  "name": "Malapert Massif",
+  "body": "moon",
+  "mission": "Artemis III – regiune candidată NASA (polul sud lunar)",
+  "lat": -86.0,
+  "lon": 0.3,
+  "window_km": 50,
+  "coord_source": "Centrul mozaicului LROC NAC_ROI_MALAPERT (−86,0°; 0,3°E)",
+  "notes": "Masiv muntos cu iluminare bună și vizibilitate spre Pământ.",
+  "info_url": "https://lroc.im-ldi.com/posts/1294",
+  "values": {
+   "slope_mean": 11.443226059789586,
+   "slope_p90": 19.067995830213356,
+   "relief": 5320.359527587891,
+   "roughness": 1480.1525915482105,
+   "t_mean": -154.0970446735395,
+   "t_max": -11.390999999999963,
+   "precip": 0.0,
+   "low_sun": 100.0,
+   "pressure": 0.0,
+   "ice": 1
+  },
+  "extra": {
+   "Altitudine medie (LOLA)": "1378 m (față de raza de referință 1737,4 km)",
+   "Temperatură medie minimă în fereastră (Diviner)": "-241 °C",
+   "Temperatură maximă – percentila 95 (Diviner)": "41 °C",
+   "Teren cu gheață stabilă la <1 m (Diviner)": "48.7% din fereastră",
+   "Triunghiuri Diviner folosite": "19206",
+   "Pixeli LOLA folosiți": "14×14 (fiecare ~3.6 km)"
+  },
+  "limits": [
+   {
+    "name": "Gravitație",
+    "target": "1,62 m/s² (0,17 g)",
+    "earth": "9,81 m/s²"
+   },
+   {
+    "name": "Atmosferă",
+    "target": "vid (exosferă)",
+    "earth": "minimum ~330 hPa (vârful Everest)"
+   },
+   {
+    "name": "Radiații",
+    "target": "~1,4 mSv/zi, fără protecție",
+    "earth": "protejat de atmosferă și de câmpul magnetic"
+   },
+   {
+    "name": "Regolit",
+    "target": "praf ascuțit, încărcat electrostatic",
+    "earth": "praf erodat de vânt și apă"
+   },
+   {
+    "name": "Cratere umbrite permanent",
+    "target": "până la −248 °C",
+    "earth": "nu există"
+   },
+   {
+    "name": "Durata zilei",
+    "target": "~29,5 zile terestre",
+    "earth": "24 h"
+   }
+  ]
+ }
+]
