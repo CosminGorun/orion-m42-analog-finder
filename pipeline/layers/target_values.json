@@ -1,0 +1,410 @@
+{
+  "malapert_massif": {
+    "dust_tau": null,
+    "dust_tau_storm": null,
+    "wind_ms": null,
+    "albedo": null,
+    "sources": {
+      "dust_tau": {
+        "source": "Not applicable: the Moon has no atmosphere",
+        "verified": false
+      },
+      "dust_tau_storm": {
+        "source": "Not applicable: the Moon has no atmosphere",
+        "verified": false
+      },
+      "wind_ms": {
+        "source": "Not applicable: the Moon has no atmosphere",
+        "verified": false
+      },
+      "albedo": {
+        "source": "No site albedo read this session (demo scope; no map downloaded)",
+        "verified": false
+      }
+    }
+  },
+  "mare_tranquillitatis_pit": {
+    "dust_tau": null,
+    "dust_tau_storm": null,
+    "wind_ms": null,
+    "albedo": null,
+    "sources": {
+      "dust_tau": {
+        "source": "Not applicable: the Moon has no atmosphere",
+        "verified": false
+      },
+      "dust_tau_storm": {
+        "source": "Not applicable: the Moon has no atmosphere",
+        "verified": false
+      },
+      "wind_ms": {
+        "source": "Not applicable: the Moon has no atmosphere",
+        "verified": false
+      },
+      "albedo": {
+        "source": "No site albedo read this session (demo scope; no map downloaded)",
+        "verified": false
+      }
+    }
+  },
+  "marius_hills_pit": {
+    "dust_tau": null,
+    "dust_tau_storm": null,
+    "wind_ms": null,
+    "albedo": null,
+    "sources": {
+      "dust_tau": {
+        "source": "Not applicable: the Moon has no atmosphere",
+        "verified": false
+      },
+      "dust_tau_storm": {
+        "source": "Not applicable: the Moon has no atmosphere",
+        "verified": false
+      },
+      "wind_ms": {
+        "source": "Not applicable: the Moon has no atmosphere",
+        "verified": false
+      },
+      "albedo": {
+        "source": "No site albedo read this session (demo scope; no map downloaded)",
+        "verified": false
+      }
+    }
+  },
+  "mare_ingenii_pit": {
+    "dust_tau": null,
+    "dust_tau_storm": null,
+    "wind_ms": null,
+    "albedo": null,
+    "sources": {
+      "dust_tau": {
+        "source": "Not applicable: the Moon has no atmosphere",
+        "verified": false
+      },
+      "dust_tau_storm": {
+        "source": "Not applicable: the Moon has no atmosphere",
+        "verified": false
+      },
+      "wind_ms": {
+        "source": "Not applicable: the Moon has no atmosphere",
+        "verified": false
+      },
+      "albedo": {
+        "source": "No site albedo read this session (demo scope; no map downloaded)",
+        "verified": false
+      }
+    }
+  },
+  "arsia_mons_jeanne": {
+    "dust_tau": 0.38,
+    "dust_tau_storm": 5.87,
+    "wind_ms": null,
+    "albedo": null,
+    "sources": {
+      "dust_tau": {
+        "source": "Montabone et al. 2015 (Icarus 251) / 2020 (JGR Planets) dust climatology v2, kriged dustscenario files, CC BY-SA 3.0; cdod610 (9.3 µm absorption CDOD normalised to 610 Pa), grid cell centred -4.5°, -120.0°E (3°x3°), median over all sols of MY26, 29, 31, 33 = 0.1462 (IR), x2.6 to visible per the dataset notes (Montabone et al. 2015, Sect. 2.3.4)",
+        "verified": true
+      },
+      "dust_tau_storm": {
+        "source": "Montabone et al. 2015 (Icarus 251) / 2020 (JGR Planets) dust climatology v2, kriged dustscenario files, CC BY-SA 3.0; cdod610, grid cell centred -4.5°, -120.0°E (3°x3°), maximum over MY25, MY28, MY34 = 2.2574 (IR), x2.6 to visible",
+        "verified": true
+      },
+      "wind_ms": {
+        "source": "No lander; no in-situ value. Model value not looked up",
+        "verified": false
+      },
+      "albedo": {
+        "source": "TES bolometric albedo (Christensen et al. 2001) not sampled: download stopped (demo scope)",
+        "verified": false
+      }
+    }
+  },
+  "tranquility_base": {
+    "dust_tau": null,
+    "dust_tau_storm": null,
+    "wind_ms": null,
+    "albedo": null,
+    "sources": {
+      "dust_tau": {
+        "source": "Not applicable: the Moon has no atmosphere",
+        "verified": false
+      },
+      "dust_tau_storm": {
+        "source": "Not applicable: the Moon has no atmosphere",
+        "verified": false
+      },
+      "wind_ms": {
+        "source": "Not applicable: the Moon has no atmosphere",
+        "verified": false
+      },
+      "albedo": {
+        "source": "No site albedo read this session (demo scope; no map downloaded)",
+        "verified": false
+      }
+    }
+  },
+  "von_karman_change4": {
+    "dust_tau": null,
+    "dust_tau_storm": null,
+    "wind_ms": null,
+    "albedo": null,
+    "sources": {
+      "dust_tau": {
+        "source": "Not applicable: the Moon has no atmosphere",
+        "verified": false
+      },
+      "dust_tau_storm": {
+        "source": "Not applicable: the Moon has no atmosphere",
+        "verified": false
+      },
+      "wind_ms": {
+        "source": "Not applicable: the Moon has no atmosphere",
+        "verified": false
+      },
+      "albedo": {
+        "source": "No site albedo read this session (demo scope; no map downloaded)",
+        "verified": false
+      }
+    }
+  },
+  "statio_shiv_shakti": {
+    "dust_tau": null,
+    "dust_tau_storm": null,
+    "wind_ms": null,
+    "albedo": null,
+    "sources": {
+      "dust_tau": {
+        "source": "Not applicable: the Moon has no atmosphere",
+        "verified": false
+      },
+      "dust_tau_storm": {
+        "source": "Not applicable: the Moon has no atmosphere",
+        "verified": false
+      },
+      "wind_ms": {
+        "source": "Not applicable: the Moon has no atmosphere",
+        "verified": false
+      },
+      "albedo": {
+        "source": "No site albedo read this session (demo scope; no map downloaded)",
+        "verified": false
+      }
+    }
+  },
+  "shackleton_rim": {
+    "dust_tau": null,
+    "dust_tau_storm": null,
+    "wind_ms": null,
+    "albedo": null,
+    "sources": {
+      "dust_tau": {
+        "source": "Not applicable: the Moon has no atmosphere",
+        "verified": false
+      },
+      "dust_tau_storm": {
+        "source": "Not applicable: the Moon has no atmosphere",
+        "verified": false
+      },
+      "wind_ms": {
+        "source": "Not applicable: the Moon has no atmosphere",
+        "verified": false
+      },
+      "albedo": {
+        "source": "No site albedo read this session (demo scope; no map downloaded)",
+        "verified": false
+      }
+    }
+  },
+  "jezero_butler_landing": {
+    "dust_tau": 0.38,
+    "dust_tau_storm": 4.04,
+    "wind_ms": 3.22,
+    "albedo": null,
+    "sources": {
+      "dust_tau": {
+        "source": "Montabone et al. 2015 (Icarus 251) / 2020 (JGR Planets) dust climatology v2, kriged dustscenario files, CC BY-SA 3.0; cdod610 (9.3 µm absorption CDOD normalised to 610 Pa), grid cell centred 19.5°, 78.0°E (3°x3°), median over all sols of MY26, 29, 31, 33 = 0.1446 (IR), x2.6 to visible per the dataset notes (Montabone et al. 2015, Sect. 2.3.4)",
+        "verified": true
+      },
+      "dust_tau_storm": {
+        "source": "Montabone et al. 2015 (Icarus 251) / 2020 (JGR Planets) dust climatology v2, kriged dustscenario files, CC BY-SA 3.0; cdod610, grid cell centred 19.5°, 78.0°E (3°x3°), maximum over MY25, MY28, MY34 = 1.5531 (IR), x2.6 to visible",
+        "verified": true
+      },
+      "wind_ms": {
+        "source": "Viúdez-Moreiras et al. 2022, JGR Planets, doi:10.1029/2022JE007523, Table 2: MEDA mean wind speed at 1.5 m, full M2020 data set to sol 315 = 3.22 m/s",
+        "verified": true
+      },
+      "albedo": {
+        "source": "TES bolometric albedo (Christensen et al. 2001) not sampled: download stopped (demo scope)",
+        "verified": false
+      }
+    }
+  },
+  "gale_bradbury_landing": {
+    "dust_tau": 0.4,
+    "dust_tau_storm": 6.08,
+    "wind_ms": null,
+    "albedo": null,
+    "sources": {
+      "dust_tau": {
+        "source": "Montabone et al. 2015 (Icarus 251) / 2020 (JGR Planets) dust climatology v2, kriged dustscenario files, CC BY-SA 3.0; cdod610 (9.3 µm absorption CDOD normalised to 610 Pa), grid cell centred -4.5°, 138.0°E (3°x3°), median over all sols of MY26, 29, 31, 33 = 0.1547 (IR), x2.6 to visible per the dataset notes (Montabone et al. 2015, Sect. 2.3.4)",
+        "verified": true
+      },
+      "dust_tau_storm": {
+        "source": "Montabone et al. 2015 (Icarus 251) / 2020 (JGR Planets) dust climatology v2, kriged dustscenario files, CC BY-SA 3.0; cdod610, grid cell centred -4.5°, 138.0°E (3°x3°), maximum over MY25, MY28, MY34 = 2.3371 (IR), x2.6 to visible",
+        "verified": true
+      },
+      "wind_ms": {
+        "source": "Curiosity REMS measured winds (Viúdez-Moreiras et al. 2019, Icarus 319, 909) but its sensor was damaged at landing; value not read this session",
+        "verified": false
+      },
+      "albedo": {
+        "source": "TES bolometric albedo (Christensen et al. 2001) not sampled: download stopped (demo scope)",
+        "verified": false
+      }
+    }
+  },
+  "meridiani_opportunity": {
+    "dust_tau": 0.39,
+    "dust_tau_storm": 5.62,
+    "wind_ms": null,
+    "albedo": null,
+    "sources": {
+      "dust_tau": {
+        "source": "Montabone et al. 2015 (Icarus 251) / 2020 (JGR Planets) dust climatology v2, kriged dustscenario files, CC BY-SA 3.0; cdod610 (9.3 µm absorption CDOD normalised to 610 Pa), grid cell centred -1.5°, -6.0°E (3°x3°), median over all sols of MY26, 29, 31, 33 = 0.151 (IR), x2.6 to visible per the dataset notes (Montabone et al. 2015, Sect. 2.3.4)",
+        "verified": true
+      },
+      "dust_tau_storm": {
+        "source": "Montabone et al. 2015 (Icarus 251) / 2020 (JGR Planets) dust climatology v2, kriged dustscenario files, CC BY-SA 3.0; cdod610, grid cell centred -1.5°, -6.0°E (3°x3°), maximum over MY25, MY28, MY34 = 2.1627 (IR), x2.6 to visible",
+        "verified": true
+      },
+      "wind_ms": {
+        "source": "No wind sensor on Opportunity; no in-situ value. Model value not looked up",
+        "verified": false
+      },
+      "albedo": {
+        "source": "TES bolometric albedo (Christensen et al. 2001) not sampled: download stopped (demo scope)",
+        "verified": false
+      }
+    }
+  },
+  "elysium_insight": {
+    "dust_tau": 0.42,
+    "dust_tau_storm": 4.63,
+    "wind_ms": 5.49,
+    "albedo": null,
+    "sources": {
+      "dust_tau": {
+        "source": "Montabone et al. 2015 (Icarus 251) / 2020 (JGR Planets) dust climatology v2, kriged dustscenario files, CC BY-SA 3.0; cdod610 (9.3 µm absorption CDOD normalised to 610 Pa), grid cell centred 4.5°, 135.0°E (3°x3°), median over all sols of MY26, 29, 31, 33 = 0.1624 (IR), x2.6 to visible per the dataset notes (Montabone et al. 2015, Sect. 2.3.4)",
+        "verified": true
+      },
+      "dust_tau_storm": {
+        "source": "Montabone et al. 2015 (Icarus 251) / 2020 (JGR Planets) dust climatology v2, kriged dustscenario files, CC BY-SA 3.0; cdod610, grid cell centred 4.5°, 135.0°E (3°x3°), maximum over MY25, MY28, MY34 = 1.7805 (IR), x2.6 to visible",
+        "verified": true
+      },
+      "wind_ms": {
+        "source": "Viúdez-Moreiras et al. 2022, JGR Planets, doi:10.1029/2022JE007523, Table 2: InSight TWINS mean wind speed at 1.5 m, full InSight data set = 5.49 m/s",
+        "verified": true
+      },
+      "albedo": {
+        "source": "TES bolometric albedo (Christensen et al. 2001) not sampled: download stopped (demo scope)",
+        "verified": false
+      }
+    }
+  },
+  "phoenix_landing_site": {
+    "dust_tau": 0.19,
+    "dust_tau_storm": 0.61,
+    "wind_ms": 4.0,
+    "albedo": null,
+    "sources": {
+      "dust_tau": {
+        "source": "Montabone et al. 2015 (Icarus 251) / 2020 (JGR Planets) dust climatology v2, kriged dustscenario files, CC BY-SA 3.0; cdod610 (9.3 µm absorption CDOD normalised to 610 Pa), grid cell centred 67.5°, -126.0°E (3°x3°), median over all sols of MY26, 29, 31, 33 = 0.0714 (IR), x2.6 to visible per the dataset notes (Montabone et al. 2015, Sect. 2.3.4)",
+        "verified": true
+      },
+      "dust_tau_storm": {
+        "source": "Montabone et al. 2015 (Icarus 251) / 2020 (JGR Planets) dust climatology v2, kriged dustscenario files, CC BY-SA 3.0; cdod610, grid cell centred 67.5°, -126.0°E (3°x3°), maximum over MY25, MY28, MY34 = 0.2351 (IR), x2.6 to visible",
+        "verified": true
+      },
+      "wind_ms": {
+        "source": "Holstein-Rathlou et al. 2010, JGR, doi:10.1029/2009JE003411 (abstract): Telltale winds ~4 m/s for Ls ~77–123° (6–10 m/s daytime for Ls ~123–148°; max 16 m/s)",
+        "verified": true
+      },
+      "albedo": {
+        "source": "TES bolometric albedo (Christensen et al. 2001) not sampled: download stopped (demo scope)",
+        "verified": false
+      }
+    }
+  },
+  "utopia_zhurong": {
+    "dust_tau": 0.32,
+    "dust_tau_storm": 3.59,
+    "wind_ms": 4.0,
+    "albedo": null,
+    "sources": {
+      "dust_tau": {
+        "source": "Montabone et al. 2015 (Icarus 251) / 2020 (JGR Planets) dust climatology v2, kriged dustscenario files, CC BY-SA 3.0; cdod610 (9.3 µm absorption CDOD normalised to 610 Pa), grid cell centred 25.5°, 111.0°E (3°x3°), median over all sols of MY26, 29, 31, 33 = 0.1215 (IR), x2.6 to visible per the dataset notes (Montabone et al. 2015, Sect. 2.3.4)",
+        "verified": true
+      },
+      "dust_tau_storm": {
+        "source": "Montabone et al. 2015 (Icarus 251) / 2020 (JGR Planets) dust climatology v2, kriged dustscenario files, CC BY-SA 3.0; cdod610, grid cell centred 25.5°, 111.0°E (3°x3°), maximum over MY25, MY28, MY34 = 1.3807 (IR), x2.6 to visible",
+        "verified": true
+      },
+      "wind_ms": {
+        "source": "Liu et al. 2023, Natl. Sci. Rev., doi:10.1093/nsr/nwad056: daytime wind speeds mainly 2–6 m/s, max ~10 m/s (value = midpoint of the reported range)",
+        "verified": true
+      },
+      "albedo": {
+        "source": "TES bolometric albedo (Christensen et al. 2001) not sampled: download stopped (demo scope)",
+        "verified": false
+      }
+    }
+  },
+  "arcadia_planitia": {
+    "dust_tau": 0.23,
+    "dust_tau_storm": 1.49,
+    "wind_ms": null,
+    "albedo": null,
+    "sources": {
+      "dust_tau": {
+        "source": "Montabone et al. 2015 (Icarus 251) / 2020 (JGR Planets) dust climatology v2, kriged dustscenario files, CC BY-SA 3.0; cdod610 (9.3 µm absorption CDOD normalised to 610 Pa), grid cell centred 49.5°, -171.0°E (3°x3°), median over all sols of MY26, 29, 31, 33 = 0.0868 (IR), x2.6 to visible per the dataset notes (Montabone et al. 2015, Sect. 2.3.4)",
+        "verified": true
+      },
+      "dust_tau_storm": {
+        "source": "Montabone et al. 2015 (Icarus 251) / 2020 (JGR Planets) dust climatology v2, kriged dustscenario files, CC BY-SA 3.0; cdod610, grid cell centred 49.5°, -171.0°E (3°x3°), maximum over MY25, MY28, MY34 = 0.5712 (IR), x2.6 to visible",
+        "verified": true
+      },
+      "wind_ms": {
+        "source": "No lander; no in-situ value. Model value not looked up",
+        "verified": false
+      },
+      "albedo": {
+        "source": "TES bolometric albedo (Christensen et al. 2001) not sampled: download stopped (demo scope)",
+        "verified": false
+      }
+    }
+  },
+  "deuteronilus_mensae": {
+    "dust_tau": 0.25,
+    "dust_tau_storm": 2.59,
+    "wind_ms": null,
+    "albedo": null,
+    "sources": {
+      "dust_tau": {
+        "source": "Montabone et al. 2015 (Icarus 251) / 2020 (JGR Planets) dust climatology v2, kriged dustscenario files, CC BY-SA 3.0; cdod610 (9.3 µm absorption CDOD normalised to 610 Pa), grid cell centred 46.5°, 24.0°E (3°x3°), median over all sols of MY26, 29, 31, 33 = 0.095 (IR), x2.6 to visible per the dataset notes (Montabone et al. 2015, Sect. 2.3.4)",
+        "verified": true
+      },
+      "dust_tau_storm": {
+        "source": "Montabone et al. 2015 (Icarus 251) / 2020 (JGR Planets) dust climatology v2, kriged dustscenario files, CC BY-SA 3.0; cdod610, grid cell centred 46.5°, 24.0°E (3°x3°), maximum over MY25, MY28, MY34 = 0.9958 (IR), x2.6 to visible",
+        "verified": true
+      },
+      "wind_ms": {
+        "source": "No lander; no in-situ value. Model value not looked up",
+        "verified": false
+      },
+      "albedo": {
+        "source": "TES bolometric albedo (Christensen et al. 2001) not sampled: download stopped (demo scope)",
+        "verified": false
+      }
+    }
+  }
+}

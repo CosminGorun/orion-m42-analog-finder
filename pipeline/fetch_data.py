@@ -14,6 +14,10 @@ RAW.mkdir(exist_ok=True)
 
 LOLA_BASE = "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/polar/img/"
 ERDDAP = "https://coastwatch.pfeg.noaa.gov/erddap/griddap/etopo180.nc"
+LOLA_GLOBAL = "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/cylindrical/img/"
+MOLA = "https://pds-geosciences.wustl.edu/mgs/mgs-m-mola-5-megdr-l3-v1/mgsl_300x/meg016/"
+GVP = ("https://webservices.volcano.si.edu/geoserver/GVP-VOTW/ows?service=WFS&version=2.0.0&request=GetFeature"
+       "&typeName=GVP-VOTW:Smithsonian_VOTW_Holocene_Volcanoes&outputFormat=application/json")
 
 ETOPO_STRIDE = 2          # 1 arc-min * 2 = 2 arc-min (~3.7 km la ecuator)
 ETOPO_BANDS = [(-90, -45), (-45, 0), (0, 45), (45, 90)]
@@ -43,6 +47,17 @@ def main() -> None:
     for lo, hi in ETOPO_BANDS:
         q = f"?altitude[({lo}):{ETOPO_STRIDE}:({hi})][(-180):{ETOPO_STRIDE}:(180)]"
         download(ERDDAP + q, RAW / f"etopo_{lo}_{hi}.nc")
+
+    # Luna - LOLA global, 16 pixeli/grad (~1,9 km), pentru tintele din afara polului sud
+    for name in ("ldem_16.img", "ldem_16.lbl"):
+        download(LOLA_GLOBAL + name, RAW / name)
+
+    # Marte - MOLA MEGDR global, 16 pixeli/grad (~3,7 km)
+    for name in ("megt90n000eb.img", "megt90n000eb.lbl"):
+        download(MOLA + name, RAW / name)
+
+    # Pamant - vulcani holoceni (Smithsonian Global Volcanism Program)
+    download(GVP, RAW / "gvp_holocene_volcanoes.json")
 
     # Datele climatice NASA (MODIS, GPM) se descarca separat, cu token: pipeline/fetch_nasa.py
 

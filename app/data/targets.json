@@ -3,6 +3,8 @@
   "id": "malapert_massif",
   "name": "Malapert Massif",
   "body": "moon",
+  "kind": "surface",
+  "group": "Landing sites",
   "mission": "Artemis III candidate landing region · lunar south pole",
   "lat": -86.0,
   "lon": 0.3,
@@ -17,10 +19,23 @@
    "roughness": 1480.1525915482105,
    "t_mean": -154.0970446735395,
    "t_max": -11.390999999999963,
+   "t_swing": null,
+   "cave_temp": null,
+   "basalt_dist": null,
    "precip": 0.0,
    "low_sun": 100.0,
    "pressure": 0.0,
-   "ice": 1
+   "ice": 1.0,
+   "polar_day": 0.0,
+   "polar_night": 0.0,
+   "dep_frac": 0.0,
+   "dep_depth": 0.0,
+   "dust": null,
+   "dust_storm": null,
+   "wind": null,
+   "soil_moist": 0.0,
+   "ndvi": 0.0,
+   "low_biomass": 1.0
   },
   "extra": {
    "Mean elevation (LOLA)": "1,378 m above the 1,737.4 km reference radius",
@@ -60,6 +75,1427 @@
     "name": "Day length",
     "target": "~29.5 Earth days",
     "earth": "24 h"
+   }
+  ]
+ },
+ {
+  "id": "mare_tranquillitatis_pit",
+  "name": "Mare Tranquillitatis Pit",
+  "body": "moon",
+  "kind": "subsurface",
+  "group": "Pits & lava tubes",
+  "mission": "Candidate lava-tube entrance · proposed target of the Moon Diver mission concept",
+  "lat": 8.3355,
+  "lon": 33.222,
+  "window_km": 50,
+  "pit_size": "100 × 88 m opening, ~105 m deep, overhangs of 10–15 m",
+  "coord_source": "LROC Lunar Pit Locations catalog (8.3355°N, 33.222°E)",
+  "notes": "Vertical-walled pit in mare basalt, the type example of lunar pits. Its shadowed floor is modelled to stay near +17 °C.",
+  "info_url": "https://data.lroc.im-ldi.com/lroc/view_rdr/SHAPEFILE_LUNAR_PIT_LOCATIONS",
+  "literature": {
+   "cave_temp": 17.0
+  },
+  "values": {
+   "slope_mean": 0.24082350983246442,
+   "slope_p90": 0.3604633463636358,
+   "relief": 101.59375,
+   "roughness": 31.979273440607127,
+   "t_mean": null,
+   "t_max": 121.43305000000004,
+   "t_swing": 299.8138166666667,
+   "cave_temp": 17.0,
+   "basalt_dist": 0.0,
+   "precip": 0.0,
+   "low_sun": 11.331595669793193,
+   "pressure": 0.0,
+   "ice": null,
+   "polar_day": 0.0,
+   "polar_night": 0.0,
+   "dep_frac": 1.0204081632653061,
+   "dep_depth": 121.0625,
+   "dust": null,
+   "dust_storm": null,
+   "wind": null,
+   "soil_moist": 0.0,
+   "ndvi": 0.0,
+   "low_biomass": 1.0
+  },
+  "extra": {
+   "Pit (LROC catalog)": "100 × 88 m opening, ~105 m deep, overhangs of 10–15 m",
+   "Mean surface elevation (LOLA)": "-795 m above the 1,737.4 km reference radius",
+   "Surface temperature range (Diviner)": "-178 °C to 121 °C",
+   "Diurnal mean surface temperature (Diviner)": "-57 °C",
+   "Diviner tiles used": "9 × 0.5° (band 00n10n)",
+   "LOLA cells used": "14 × 14 (each ~3.8 km)"
+  },
+  "limits": [
+   {
+    "name": "Gravity",
+    "target": "1.62 m/s² (0.17 g)",
+    "earth": "9.81 m/s²"
+   },
+   {
+    "name": "Atmosphere",
+    "target": "vacuum (exosphere)",
+    "earth": "at least ~330 hPa (summit of Everest)"
+   },
+   {
+    "name": "Radiation",
+    "target": "~1.4 mSv/day, unshielded",
+    "earth": "shielded by atmosphere and magnetic field"
+   },
+   {
+    "name": "Regolith",
+    "target": "sharp, electrostatically charged dust",
+    "earth": "dust rounded by wind and water"
+   },
+   {
+    "name": "Permanently shadowed regions",
+    "target": "down to −248 °C",
+    "earth": "none"
+   },
+   {
+    "name": "Day length",
+    "target": "~29.5 Earth days",
+    "earth": "24 h"
+   }
+  ],
+  "notes_subsurface": [
+   {
+    "claim": "The shadowed part of the Mare Tranquillitatis pit stays near +17 °C through the lunar day, while the sunlit surface swings by roughly 290 K.",
+    "status": "verified",
+    "caveat": "Modelled from Diviner data; the cave behind the pit has not been observed thermally.",
+    "source": "Horvath, Paige & Hayne (2022), Geophysical Research Letters, doi:10.1029/2022GL099710",
+    "url": "https://doi.org/10.1029/2022GL099710"
+   },
+   {
+    "claim": "The LROC catalog lists 278 lunar pits: 16 in mare basalt, 5 in highlands and 257 in impact melt. Several mare pits show overhangs that may open into lava tubes.",
+    "status": "verified",
+    "caveat": "Counts from the current LROC catalog version.",
+    "source": "LROC Lunar Pit Locations catalog (Wagner & Robinson)",
+    "url": "https://data.lroc.im-ldi.com/lroc/view_rdr/SHAPEFILE_LUNAR_PIT_LOCATIONS"
+   },
+   {
+    "claim": "Seven candidate cave skylights were found on the flanks of Arsia Mons, Mars, with minimum depths of about 68–130 m.",
+    "status": "verified",
+    "caveat": "Depths are minimum values from THEMIS thermal and visible images.",
+    "source": "Cushing et al. (2007), Geophysical Research Letters, doi:10.1029/2007GL030709",
+    "url": "https://doi.org/10.1029/2007GL030709"
+   },
+   {
+    "claim": "The bacterium Sphingomonas desiccabilis increased rare earth element leaching from basalt on the ISS (BioRock), in microgravity and simulated Mars gravity.",
+    "status": "verified",
+    "caveat": "Terrestrial basalt, small samples, 21 days. The report's “+429 %” and yields per 100 kg are not in the paper.",
+    "source": "Cockell et al. (2020), Nature Communications 11, 5523",
+    "url": "https://doi.org/10.1038/s41467-020-19276-w"
+   },
+   {
+    "claim": "Lunar surface missions are COSPAR Category II: IIb for the poles and permanently shadowed regions, IIa elsewhere. Category IV applies to Mars landers.",
+    "status": "verified",
+    "caveat": "The team report lists lunar caves as Category IV, which is incorrect.",
+    "source": "COSPAR Panel on Planetary Protection, 2021 update",
+    "url": "https://sma.nasa.gov/news/articles/newsitem/2021/08/31/cospar-updates-planetary-protection-policy-for-lunar-missions"
+   },
+   {
+    "claim": "15 m of rock attenuates ionizing radiation by 99.8 %.",
+    "status": "unverified",
+    "caveat": "Plausible order of magnitude; needs a transport calculation or citation.",
+    "source": "Team report",
+    "url": ""
+   },
+   {
+    "claim": "Bacillus subtilis spores and Deinococcus radiodurans keep over 99.5 % viability for 30 days inside a lava tube.",
+    "status": "unverified",
+    "caveat": "Described as a simulation result; model and inputs not documented.",
+    "source": "Team report",
+    "url": ""
+   }
+  ]
+ },
+ {
+  "id": "marius_hills_pit",
+  "name": "Marius Hills Pit",
+  "body": "moon",
+  "kind": "subsurface",
+  "group": "Pits & lava tubes",
+  "mission": "Candidate lava-tube skylight in a sinuous rille · Oceanus Procellarum",
+  "lat": 14.0917,
+  "lon": -56.7701,
+  "window_km": 50,
+  "pit_size": "55 × 49 m opening, ~40 m deep, overhangs near the floor",
+  "coord_source": "LROC Lunar Pit Locations catalog (14.0917°N, 56.7701°W)",
+  "notes": "Pit in the middle of a sinuous rille, a strong sign of an intact lava tube. No published interior temperature yet.",
+  "info_url": "https://data.lroc.im-ldi.com/lroc/view_rdr/SHAPEFILE_LUNAR_PIT_LOCATIONS",
+  "values": {
+   "slope_mean": 1.030127378193556,
+   "slope_p90": 1.778670650825906,
+   "relief": 677.25,
+   "roughness": 68.3019016831293,
+   "t_mean": null,
+   "t_max": 118.61825555555549,
+   "t_swing": 297.3723888888888,
+   "cave_temp": null,
+   "basalt_dist": 0.0,
+   "precip": 0.0,
+   "low_sun": 11.525655904568026,
+   "pressure": 0.0,
+   "ice": null,
+   "polar_day": 0.0,
+   "polar_night": 0.0,
+   "dep_frac": 0.0,
+   "dep_depth": 0.0,
+   "dust": null,
+   "dust_storm": null,
+   "wind": null,
+   "soil_moist": 0.0,
+   "ndvi": 0.0,
+   "low_biomass": 1.0
+  },
+  "extra": {
+   "Pit (LROC catalog)": "55 × 49 m opening, ~40 m deep, overhangs near the floor",
+   "Mean surface elevation (LOLA)": "-1,490 m above the 1,737.4 km reference radius",
+   "Surface temperature range (Diviner)": "-179 °C to 119 °C",
+   "Diurnal mean surface temperature (Diviner)": "-62 °C",
+   "Diviner tiles used": "9 × 0.5° (band 10n20n)",
+   "LOLA cells used": "14 × 14 (each ~3.8 km)"
+  },
+  "limits": [
+   {
+    "name": "Gravity",
+    "target": "1.62 m/s² (0.17 g)",
+    "earth": "9.81 m/s²"
+   },
+   {
+    "name": "Atmosphere",
+    "target": "vacuum (exosphere)",
+    "earth": "at least ~330 hPa (summit of Everest)"
+   },
+   {
+    "name": "Radiation",
+    "target": "~1.4 mSv/day, unshielded",
+    "earth": "shielded by atmosphere and magnetic field"
+   },
+   {
+    "name": "Regolith",
+    "target": "sharp, electrostatically charged dust",
+    "earth": "dust rounded by wind and water"
+   },
+   {
+    "name": "Permanently shadowed regions",
+    "target": "down to −248 °C",
+    "earth": "none"
+   },
+   {
+    "name": "Day length",
+    "target": "~29.5 Earth days",
+    "earth": "24 h"
+   }
+  ],
+  "notes_subsurface": [
+   {
+    "claim": "The shadowed part of the Mare Tranquillitatis pit stays near +17 °C through the lunar day, while the sunlit surface swings by roughly 290 K.",
+    "status": "verified",
+    "caveat": "Modelled from Diviner data; the cave behind the pit has not been observed thermally.",
+    "source": "Horvath, Paige & Hayne (2022), Geophysical Research Letters, doi:10.1029/2022GL099710",
+    "url": "https://doi.org/10.1029/2022GL099710"
+   },
+   {
+    "claim": "The LROC catalog lists 278 lunar pits: 16 in mare basalt, 5 in highlands and 257 in impact melt. Several mare pits show overhangs that may open into lava tubes.",
+    "status": "verified",
+    "caveat": "Counts from the current LROC catalog version.",
+    "source": "LROC Lunar Pit Locations catalog (Wagner & Robinson)",
+    "url": "https://data.lroc.im-ldi.com/lroc/view_rdr/SHAPEFILE_LUNAR_PIT_LOCATIONS"
+   },
+   {
+    "claim": "Seven candidate cave skylights were found on the flanks of Arsia Mons, Mars, with minimum depths of about 68–130 m.",
+    "status": "verified",
+    "caveat": "Depths are minimum values from THEMIS thermal and visible images.",
+    "source": "Cushing et al. (2007), Geophysical Research Letters, doi:10.1029/2007GL030709",
+    "url": "https://doi.org/10.1029/2007GL030709"
+   },
+   {
+    "claim": "The bacterium Sphingomonas desiccabilis increased rare earth element leaching from basalt on the ISS (BioRock), in microgravity and simulated Mars gravity.",
+    "status": "verified",
+    "caveat": "Terrestrial basalt, small samples, 21 days. The report's “+429 %” and yields per 100 kg are not in the paper.",
+    "source": "Cockell et al. (2020), Nature Communications 11, 5523",
+    "url": "https://doi.org/10.1038/s41467-020-19276-w"
+   },
+   {
+    "claim": "Lunar surface missions are COSPAR Category II: IIb for the poles and permanently shadowed regions, IIa elsewhere. Category IV applies to Mars landers.",
+    "status": "verified",
+    "caveat": "The team report lists lunar caves as Category IV, which is incorrect.",
+    "source": "COSPAR Panel on Planetary Protection, 2021 update",
+    "url": "https://sma.nasa.gov/news/articles/newsitem/2021/08/31/cospar-updates-planetary-protection-policy-for-lunar-missions"
+   },
+   {
+    "claim": "15 m of rock attenuates ionizing radiation by 99.8 %.",
+    "status": "unverified",
+    "caveat": "Plausible order of magnitude; needs a transport calculation or citation.",
+    "source": "Team report",
+    "url": ""
+   },
+   {
+    "claim": "Bacillus subtilis spores and Deinococcus radiodurans keep over 99.5 % viability for 30 days inside a lava tube.",
+    "status": "unverified",
+    "caveat": "Described as a simulation result; model and inputs not documented.",
+    "source": "Team report",
+    "url": ""
+   }
+  ]
+ },
+ {
+  "id": "mare_ingenii_pit",
+  "name": "Mare Ingenii Pit",
+  "body": "moon",
+  "kind": "subsurface",
+  "group": "Pits & lava tubes",
+  "mission": "Candidate lava-tube entrance · lunar far side",
+  "lat": -35.9494,
+  "lon": 166.0559,
+  "window_km": 50,
+  "pit_size": "104 × 71 m opening, ~55 m deep, overhangs of 10–20 m",
+  "coord_source": "LROC Lunar Pit Locations catalog (35.9494°S, 166.0559°E)",
+  "notes": "Far-side pit with a pronounced funnel and overhangs on two sides. No published interior temperature yet.",
+  "info_url": "https://data.lroc.im-ldi.com/lroc/view_rdr/SHAPEFILE_LUNAR_PIT_LOCATIONS",
+  "values": {
+   "slope_mean": 0.3611930234221626,
+   "slope_p90": 0.5738923054181364,
+   "relief": 165.83125000000018,
+   "roughness": 28.676478022808332,
+   "t_mean": null,
+   "t_max": 97.60469999999998,
+   "t_swing": 280.88149999999996,
+   "cave_temp": null,
+   "basalt_dist": 0.0,
+   "precip": 0.0,
+   "low_sun": 13.835353208652803,
+   "pressure": 0.0,
+   "ice": null,
+   "polar_day": 0.0,
+   "polar_night": 0.0,
+   "dep_frac": 3.5714285714285716,
+   "dep_depth": 27.859375,
+   "dust": null,
+   "dust_storm": null,
+   "wind": null,
+   "soil_moist": 0.0,
+   "ndvi": 0.0,
+   "low_biomass": 1.0
+  },
+  "extra": {
+   "Pit (LROC catalog)": "104 × 71 m opening, ~55 m deep, overhangs of 10–20 m",
+   "Mean surface elevation (LOLA)": "-3,610 m above the 1,737.4 km reference radius",
+   "Surface temperature range (Diviner)": "-183 °C to 98 °C",
+   "Diurnal mean surface temperature (Diviner)": "-65 °C",
+   "Diviner tiles used": "9 × 0.5° (band 40s30s)",
+   "LOLA cells used": "14 × 16 (each ~3.8 km)"
+  },
+  "limits": [
+   {
+    "name": "Gravity",
+    "target": "1.62 m/s² (0.17 g)",
+    "earth": "9.81 m/s²"
+   },
+   {
+    "name": "Atmosphere",
+    "target": "vacuum (exosphere)",
+    "earth": "at least ~330 hPa (summit of Everest)"
+   },
+   {
+    "name": "Radiation",
+    "target": "~1.4 mSv/day, unshielded",
+    "earth": "shielded by atmosphere and magnetic field"
+   },
+   {
+    "name": "Regolith",
+    "target": "sharp, electrostatically charged dust",
+    "earth": "dust rounded by wind and water"
+   },
+   {
+    "name": "Permanently shadowed regions",
+    "target": "down to −248 °C",
+    "earth": "none"
+   },
+   {
+    "name": "Day length",
+    "target": "~29.5 Earth days",
+    "earth": "24 h"
+   }
+  ],
+  "notes_subsurface": [
+   {
+    "claim": "The shadowed part of the Mare Tranquillitatis pit stays near +17 °C through the lunar day, while the sunlit surface swings by roughly 290 K.",
+    "status": "verified",
+    "caveat": "Modelled from Diviner data; the cave behind the pit has not been observed thermally.",
+    "source": "Horvath, Paige & Hayne (2022), Geophysical Research Letters, doi:10.1029/2022GL099710",
+    "url": "https://doi.org/10.1029/2022GL099710"
+   },
+   {
+    "claim": "The LROC catalog lists 278 lunar pits: 16 in mare basalt, 5 in highlands and 257 in impact melt. Several mare pits show overhangs that may open into lava tubes.",
+    "status": "verified",
+    "caveat": "Counts from the current LROC catalog version.",
+    "source": "LROC Lunar Pit Locations catalog (Wagner & Robinson)",
+    "url": "https://data.lroc.im-ldi.com/lroc/view_rdr/SHAPEFILE_LUNAR_PIT_LOCATIONS"
+   },
+   {
+    "claim": "Seven candidate cave skylights were found on the flanks of Arsia Mons, Mars, with minimum depths of about 68–130 m.",
+    "status": "verified",
+    "caveat": "Depths are minimum values from THEMIS thermal and visible images.",
+    "source": "Cushing et al. (2007), Geophysical Research Letters, doi:10.1029/2007GL030709",
+    "url": "https://doi.org/10.1029/2007GL030709"
+   },
+   {
+    "claim": "The bacterium Sphingomonas desiccabilis increased rare earth element leaching from basalt on the ISS (BioRock), in microgravity and simulated Mars gravity.",
+    "status": "verified",
+    "caveat": "Terrestrial basalt, small samples, 21 days. The report's “+429 %” and yields per 100 kg are not in the paper.",
+    "source": "Cockell et al. (2020), Nature Communications 11, 5523",
+    "url": "https://doi.org/10.1038/s41467-020-19276-w"
+   },
+   {
+    "claim": "Lunar surface missions are COSPAR Category II: IIb for the poles and permanently shadowed regions, IIa elsewhere. Category IV applies to Mars landers.",
+    "status": "verified",
+    "caveat": "The team report lists lunar caves as Category IV, which is incorrect.",
+    "source": "COSPAR Panel on Planetary Protection, 2021 update",
+    "url": "https://sma.nasa.gov/news/articles/newsitem/2021/08/31/cospar-updates-planetary-protection-policy-for-lunar-missions"
+   },
+   {
+    "claim": "15 m of rock attenuates ionizing radiation by 99.8 %.",
+    "status": "unverified",
+    "caveat": "Plausible order of magnitude; needs a transport calculation or citation.",
+    "source": "Team report",
+    "url": ""
+   },
+   {
+    "claim": "Bacillus subtilis spores and Deinococcus radiodurans keep over 99.5 % viability for 30 days inside a lava tube.",
+    "status": "unverified",
+    "caveat": "Described as a simulation result; model and inputs not documented.",
+    "source": "Team report",
+    "url": ""
+   }
+  ]
+ },
+ {
+  "id": "arsia_mons_jeanne",
+  "name": "Arsia Mons skylight “Jeanne”",
+  "body": "mars",
+  "kind": "subsurface",
+  "group": "Pits & lava tubes",
+  "mission": "Candidate cave skylight on the flank of Arsia Mons, Mars",
+  "lat": -5.5332,
+  "lon": -118.6069,
+  "window_km": 50,
+  "pit_size": "APC075 · ~165 m diameter (Cushing et al. 2007 name: Jeanne)",
+  "coord_source": "Mars Global Cave Candidate Catalog, feature APC075 (5.5332°S, 241.3931°E)",
+  "notes": "Atypical pit crater on the Arsia Mons basaltic shield, one of the seven skylights described in 2007. Thermal criteria are not yet included for Mars.",
+  "info_url": "https://astrogeology.usgs.gov/search/map/mars_global_cave_candidate_catalog_v1_cushing",
+  "values": {
+   "slope_mean": 1.3035271346634063,
+   "slope_p90": 1.6361137538036428,
+   "relief": 1024.25,
+   "roughness": 37.75389613670921,
+   "t_mean": null,
+   "t_max": null,
+   "t_swing": null,
+   "cave_temp": null,
+   "basalt_dist": 0.0,
+   "precip": 0.0,
+   "low_sun": 11.662639599703201,
+   "pressure": 2.4837893933853663,
+   "ice": null,
+   "polar_day": 0.0,
+   "polar_night": 0.0,
+   "dep_frac": 0.0,
+   "dep_depth": 0.0,
+   "dust": 0.38,
+   "dust_storm": 1.0,
+   "wind": null,
+   "soil_moist": 0.0,
+   "ndvi": 0.0,
+   "low_biomass": 1.0
+  },
+  "extra": {
+   "Skylight (Mars cave catalog)": "APC075 · ~165 m diameter (Cushing et al. 2007 name: Jeanne)",
+   "Mean elevation (MOLA)": "9,973 m above the Mars datum",
+   "Estimated surface pressure": "2.5 hPa",
+   "Thermal data": "Not yet included for Mars targets",
+   "MOLA cells used": "14 × 14 (each ~3.7 km)"
+  },
+  "limits": [
+   {
+    "name": "Gravity",
+    "target": "3.71 m/s² (0.38 g)",
+    "earth": "9.81 m/s²"
+   },
+   {
+    "name": "Atmosphere",
+    "target": "~6 hPa mean, 95% CO₂ (about 1–2 hPa on Arsia Mons)",
+    "earth": "at least ~330 hPa (summit of Everest)"
+   },
+   {
+    "name": "Radiation",
+    "target": "~0.64 mSv/day at the surface (MSL RAD)",
+    "earth": "shielded by atmosphere and magnetic field"
+   },
+   {
+    "name": "Surface UV",
+    "target": "UV-C reaches the ground (almost no ozone)",
+    "earth": "UV-C absorbed by the ozone layer"
+   },
+   {
+    "name": "Planetary protection",
+    "target": "COSPAR Category IV; caves may be Special Regions",
+    "earth": "—"
+   }
+  ],
+  "notes_subsurface": [
+   {
+    "claim": "The shadowed part of the Mare Tranquillitatis pit stays near +17 °C through the lunar day, while the sunlit surface swings by roughly 290 K.",
+    "status": "verified",
+    "caveat": "Modelled from Diviner data; the cave behind the pit has not been observed thermally.",
+    "source": "Horvath, Paige & Hayne (2022), Geophysical Research Letters, doi:10.1029/2022GL099710",
+    "url": "https://doi.org/10.1029/2022GL099710"
+   },
+   {
+    "claim": "The LROC catalog lists 278 lunar pits: 16 in mare basalt, 5 in highlands and 257 in impact melt. Several mare pits show overhangs that may open into lava tubes.",
+    "status": "verified",
+    "caveat": "Counts from the current LROC catalog version.",
+    "source": "LROC Lunar Pit Locations catalog (Wagner & Robinson)",
+    "url": "https://data.lroc.im-ldi.com/lroc/view_rdr/SHAPEFILE_LUNAR_PIT_LOCATIONS"
+   },
+   {
+    "claim": "Seven candidate cave skylights were found on the flanks of Arsia Mons, Mars, with minimum depths of about 68–130 m.",
+    "status": "verified",
+    "caveat": "Depths are minimum values from THEMIS thermal and visible images.",
+    "source": "Cushing et al. (2007), Geophysical Research Letters, doi:10.1029/2007GL030709",
+    "url": "https://doi.org/10.1029/2007GL030709"
+   },
+   {
+    "claim": "The bacterium Sphingomonas desiccabilis increased rare earth element leaching from basalt on the ISS (BioRock), in microgravity and simulated Mars gravity.",
+    "status": "verified",
+    "caveat": "Terrestrial basalt, small samples, 21 days. The report's “+429 %” and yields per 100 kg are not in the paper.",
+    "source": "Cockell et al. (2020), Nature Communications 11, 5523",
+    "url": "https://doi.org/10.1038/s41467-020-19276-w"
+   },
+   {
+    "claim": "Lunar surface missions are COSPAR Category II: IIb for the poles and permanently shadowed regions, IIa elsewhere. Category IV applies to Mars landers.",
+    "status": "verified",
+    "caveat": "The team report lists lunar caves as Category IV, which is incorrect.",
+    "source": "COSPAR Panel on Planetary Protection, 2021 update",
+    "url": "https://sma.nasa.gov/news/articles/newsitem/2021/08/31/cospar-updates-planetary-protection-policy-for-lunar-missions"
+   },
+   {
+    "claim": "15 m of rock attenuates ionizing radiation by 99.8 %.",
+    "status": "unverified",
+    "caveat": "Plausible order of magnitude; needs a transport calculation or citation.",
+    "source": "Team report",
+    "url": ""
+   },
+   {
+    "claim": "Bacillus subtilis spores and Deinococcus radiodurans keep over 99.5 % viability for 30 days inside a lava tube.",
+    "status": "unverified",
+    "caveat": "Described as a simulation result; model and inputs not documented.",
+    "source": "Team report",
+    "url": ""
+   }
+  ]
+ },
+ {
+  "id": "tranquility_base",
+  "name": "Tranquility Base",
+  "body": "moon",
+  "kind": "surface",
+  "group": "Landing sites",
+  "mission": "Apollo 11 landing site · Mare Tranquillitatis",
+  "lat": 0.6741,
+  "lon": 23.4732,
+  "window_km": 50,
+  "coord_source": "USGS Gazetteer of Planetary Nomenclature, Statio Tranquillitatis (0.6741°N, 23.4732°E)",
+  "notes": "Flat, equatorial mare basalt plain, the first crewed landing site. Smooth, dark lava terrain with a full day-night thermal cycle.",
+  "info_url": "https://planetarynames.wr.usgs.gov/Feature/5684",
+  "values": {
+   "slope_mean": 0.678262712833309,
+   "slope_p90": 1.0073030624821386,
+   "relief": 539.1875,
+   "roughness": 49.68219437004478,
+   "t_mean": null,
+   "t_max": 121.85486666666668,
+   "t_swing": 300.01573333333334,
+   "cave_temp": null,
+   "basalt_dist": 0.0,
+   "precip": 0.0,
+   "low_sun": 11.129925229733072,
+   "pressure": 0.0,
+   "ice": null,
+   "polar_day": 0.0,
+   "polar_night": 0.0,
+   "dep_frac": 0.0,
+   "dep_depth": 0.0,
+   "dust": null,
+   "dust_storm": null,
+   "wind": null,
+   "soil_moist": 0.0,
+   "ndvi": 0.0,
+   "low_biomass": 1.0
+  },
+  "extra": {
+   "Pit (LROC catalog)": "—",
+   "Mean surface elevation (LOLA)": "-1,899 m above the 1,737.4 km reference radius",
+   "Surface temperature range (Diviner)": "-178 °C to 122 °C",
+   "Diurnal mean surface temperature (Diviner)": "-55 °C",
+   "Diviner tiles used": "9 × 0.5° (band 00n10n)",
+   "LOLA cells used": "14 × 14 (each ~3.8 km)"
+  },
+  "limits": [
+   {
+    "name": "Gravity",
+    "target": "1.62 m/s² (0.17 g)",
+    "earth": "9.81 m/s²"
+   },
+   {
+    "name": "Atmosphere",
+    "target": "vacuum (exosphere)",
+    "earth": "at least ~330 hPa (summit of Everest)"
+   },
+   {
+    "name": "Radiation",
+    "target": "~1.4 mSv/day, unshielded",
+    "earth": "shielded by atmosphere and magnetic field"
+   },
+   {
+    "name": "Regolith",
+    "target": "sharp, electrostatically charged dust",
+    "earth": "dust rounded by wind and water"
+   },
+   {
+    "name": "Permanently shadowed regions",
+    "target": "down to −248 °C",
+    "earth": "none"
+   },
+   {
+    "name": "Day length",
+    "target": "~29.5 Earth days",
+    "earth": "24 h"
+   }
+  ]
+ },
+ {
+  "id": "von_karman_change4",
+  "name": "Von Kármán crater (Chang'e-4)",
+  "body": "moon",
+  "kind": "surface",
+  "group": "Landing sites",
+  "mission": "Chang'e-4 landing site (Statio Tianhe) · lunar far side, South Pole–Aitken basin",
+  "lat": -45.45,
+  "lon": 177.6,
+  "window_km": 50,
+  "coord_source": "USGS Gazetteer of Planetary Nomenclature, Statio Tianhe, Chang'e-4 landing site (45.45°S, 177.6°E)",
+  "notes": "Mare-flooded floor of a large crater inside the South Pole–Aitken basin, the first landing on the lunar far side.",
+  "info_url": "https://planetarynames.wr.usgs.gov/Feature/15781",
+  "values": {
+   "slope_mean": 0.1921617238178637,
+   "slope_p90": 0.40297230759244657,
+   "relief": 77.60000000000036,
+   "roughness": 20.88550855834644,
+   "t_mean": null,
+   "t_max": 81.79816666666665,
+   "t_swing": 267.0116666666666,
+   "cave_temp": null,
+   "basalt_dist": 0.0,
+   "precip": 0.0,
+   "low_sun": 15.947185175320104,
+   "pressure": 0.0,
+   "ice": null,
+   "polar_day": 0.0,
+   "polar_night": 0.0,
+   "dep_frac": 1.1904761904761905,
+   "dep_depth": 14.333333333333334,
+   "dust": null,
+   "dust_storm": null,
+   "wind": null,
+   "soil_moist": 0.0,
+   "ndvi": 0.0,
+   "low_biomass": 1.0
+  },
+  "extra": {
+   "Pit (LROC catalog)": "—",
+   "Mean surface elevation (LOLA)": "-5,925 m above the 1,737.4 km reference radius",
+   "Surface temperature range (Diviner)": "-185 °C to 82 °C",
+   "Diurnal mean surface temperature (Diviner)": "-67 °C",
+   "Diviner tiles used": "9 × 0.5° (band 50s40s)",
+   "LOLA cells used": "14 × 18 (each ~3.8 km)"
+  },
+  "limits": [
+   {
+    "name": "Gravity",
+    "target": "1.62 m/s² (0.17 g)",
+    "earth": "9.81 m/s²"
+   },
+   {
+    "name": "Atmosphere",
+    "target": "vacuum (exosphere)",
+    "earth": "at least ~330 hPa (summit of Everest)"
+   },
+   {
+    "name": "Radiation",
+    "target": "~1.4 mSv/day, unshielded",
+    "earth": "shielded by atmosphere and magnetic field"
+   },
+   {
+    "name": "Regolith",
+    "target": "sharp, electrostatically charged dust",
+    "earth": "dust rounded by wind and water"
+   },
+   {
+    "name": "Permanently shadowed regions",
+    "target": "down to −248 °C",
+    "earth": "none"
+   },
+   {
+    "name": "Day length",
+    "target": "~29.5 Earth days",
+    "earth": "24 h"
+   }
+  ]
+ },
+ {
+  "id": "statio_shiv_shakti",
+  "name": "Statio Shiv Shakti (Chandrayaan-3)",
+  "body": "moon",
+  "kind": "surface",
+  "group": "Landing sites",
+  "mission": "Chandrayaan-3 Vikram landing site · lunar south polar highlands",
+  "lat": -69.3734,
+  "lon": 32.3198,
+  "window_km": 50,
+  "coord_source": "USGS Gazetteer of Planetary Nomenclature, Statio Shiv Shakti, Chandrayaan-3 Vikram landing site (69.3734°S, 32.3198°E)",
+  "notes": "High-latitude highland plain near the south pole, with low sun angles and long shadows but outside the permanently shadowed zone.",
+  "info_url": "https://planetarynames.wr.usgs.gov/Feature/16272",
+  "values": {
+   "slope_mean": 2.6186646285722337,
+   "slope_p90": 5.113532361243107,
+   "relief": 817.41875,
+   "roughness": 292.77341344682776,
+   "t_mean": null,
+   "t_max": 14.890428571428629,
+   "t_swing": 211.1233785714286,
+   "cave_temp": null,
+   "basalt_dist": 0.0,
+   "precip": 0.0,
+   "low_sun": 32.90652765358345,
+   "pressure": 0.0,
+   "ice": null,
+   "polar_day": 0.0,
+   "polar_night": 0.0,
+   "dep_frac": 11.654135338345865,
+   "dep_depth": 27.637096774193548,
+   "dust": null,
+   "dust_storm": null,
+   "wind": null,
+   "soil_moist": 0.0,
+   "ndvi": 0.0,
+   "low_biomass": 1.0
+  },
+  "extra": {
+   "Pit (LROC catalog)": "—",
+   "Mean surface elevation (LOLA)": "810 m above the 1,737.4 km reference radius",
+   "Surface temperature range (Diviner)": "-196 °C to 15 °C",
+   "Diurnal mean surface temperature (Diviner)": "-108 °C",
+   "Diviner tiles used": "9 × 0.5° (band 70s60s)",
+   "LOLA cells used": "14 × 38 (each ~3.8 km)"
+  },
+  "limits": [
+   {
+    "name": "Gravity",
+    "target": "1.62 m/s² (0.17 g)",
+    "earth": "9.81 m/s²"
+   },
+   {
+    "name": "Atmosphere",
+    "target": "vacuum (exosphere)",
+    "earth": "at least ~330 hPa (summit of Everest)"
+   },
+   {
+    "name": "Radiation",
+    "target": "~1.4 mSv/day, unshielded",
+    "earth": "shielded by atmosphere and magnetic field"
+   },
+   {
+    "name": "Regolith",
+    "target": "sharp, electrostatically charged dust",
+    "earth": "dust rounded by wind and water"
+   },
+   {
+    "name": "Permanently shadowed regions",
+    "target": "down to −248 °C",
+    "earth": "none"
+   },
+   {
+    "name": "Day length",
+    "target": "~29.5 Earth days",
+    "earth": "24 h"
+   }
+  ]
+ },
+ {
+  "id": "shackleton_rim",
+  "name": "Shackleton crater rim",
+  "body": "moon",
+  "kind": "surface",
+  "group": "Landing sites",
+  "mission": "Artemis III candidate region · lunar south pole",
+  "lat": -89.67,
+  "lon": 129.78,
+  "window_km": 50,
+  "coord_source": "USGS Gazetteer of Planetary Nomenclature, Shackleton crater centre (89.67°S, 129.78°E; diameter 20.9 km); the 50 km window centred here contains the whole rim and lies well inside LOLA LDEM_75S_240M coverage",
+  "notes": "Rim of a 21 km crater almost at the south pole: near-permanent sunlight on the rim beside a permanently shadowed, very cold interior.",
+  "info_url": "https://planetarynames.wr.usgs.gov/Feature/5450",
+  "values": {
+   "slope_mean": 7.884801803195614,
+   "slope_p90": 15.740470057134765,
+   "relief": 2517.0955505371094,
+   "roughness": 784.1732034447299,
+   "t_mean": -174.68925948134478,
+   "t_max": -40.74199999999999,
+   "t_swing": null,
+   "cave_temp": null,
+   "basalt_dist": null,
+   "precip": 0.0,
+   "low_sun": 100.0,
+   "pressure": 0.0,
+   "ice": 1.0,
+   "polar_day": 60.54794520547945,
+   "polar_night": 22.73972602739726,
+   "dep_frac": 9.693877551020408,
+   "dep_depth": 1325.2791940789473,
+   "dust": null,
+   "dust_storm": null,
+   "wind": null,
+   "soil_moist": 0.0,
+   "ndvi": 0.0,
+   "low_biomass": 1.0
+  },
+  "extra": {
+   "Mean elevation (LOLA)": "-55 m above the 1,737.4 km reference radius",
+   "Coldest mean temperature in window (Diviner)": "-246 °C",
+   "Maximum temperature, 95th percentile (Diviner)": "20 °C",
+   "Area with ice stable within 1 m (Diviner)": "57.0% of window",
+   "Diviner facets used": "19,512",
+   "LOLA cells used": "14 × 14 (each ~3.6 km)"
+  },
+  "limits": [
+   {
+    "name": "Gravity",
+    "target": "1.62 m/s² (0.17 g)",
+    "earth": "9.81 m/s²"
+   },
+   {
+    "name": "Atmosphere",
+    "target": "vacuum (exosphere)",
+    "earth": "at least ~330 hPa (summit of Everest)"
+   },
+   {
+    "name": "Radiation",
+    "target": "~1.4 mSv/day, unshielded",
+    "earth": "shielded by atmosphere and magnetic field"
+   },
+   {
+    "name": "Regolith",
+    "target": "sharp, electrostatically charged dust",
+    "earth": "dust rounded by wind and water"
+   },
+   {
+    "name": "Permanently shadowed regions",
+    "target": "down to −248 °C",
+    "earth": "none"
+   },
+   {
+    "name": "Day length",
+    "target": "~29.5 Earth days",
+    "earth": "24 h"
+   }
+  ]
+ },
+ {
+  "id": "jezero_butler_landing",
+  "name": "Jezero crater (Octavia E. Butler Landing)",
+  "body": "mars",
+  "kind": "surface",
+  "group": "Landing sites",
+  "mission": "Mars 2020 Perseverance landing site · Jezero crater, western Isidis",
+  "lat": 18.44,
+  "lon": 77.45,
+  "window_km": 50,
+  "coord_source": "Newman et al. 2022, Sci. Adv. 8, eabn3783: “Perseverance landed at longitude 77.45°E and latitude 18.44°N”",
+  "notes": "Floor of a 45 km crater that once held a lake, next to a river delta. Ancient lake sediments and igneous crater-floor rocks.",
+  "info_url": "https://doi.org/10.1126/sciadv.abn3783",
+  "values": {
+   "slope_mean": 1.7722634251301688,
+   "slope_p90": 3.9735397873207994,
+   "relief": 805.0,
+   "roughness": 188.45760190816637,
+   "t_mean": null,
+   "t_max": null,
+   "t_swing": null,
+   "cave_temp": null,
+   "basalt_dist": 0.0,
+   "precip": 0.0,
+   "low_sun": 12.43507543615989,
+   "pressure": 7.484640857947267,
+   "ice": null,
+   "polar_day": 0.0,
+   "polar_night": 0.0,
+   "dep_frac": 2.0408163265306123,
+   "dep_depth": 21.25,
+   "dust": 0.38,
+   "dust_storm": 1.0,
+   "wind": 0.3864,
+   "soil_moist": 0.0,
+   "ndvi": 0.0,
+   "low_biomass": 1.0
+  },
+  "extra": {
+   "Skylight (Mars cave catalog)": "—",
+   "Mean elevation (MOLA)": "-2,271 m above the Mars datum",
+   "Estimated surface pressure": "7.5 hPa",
+   "Thermal data": "Not yet included for Mars targets",
+   "MOLA cells used": "14 × 14 (each ~3.7 km)"
+  },
+  "limits": [
+   {
+    "name": "Gravity",
+    "target": "3.71 m/s² (0.38 g)",
+    "earth": "9.81 m/s²"
+   },
+   {
+    "name": "Atmosphere",
+    "target": "~6 hPa mean, 95% CO₂ (about 1–2 hPa on Arsia Mons)",
+    "earth": "at least ~330 hPa (summit of Everest)"
+   },
+   {
+    "name": "Radiation",
+    "target": "~0.64 mSv/day at the surface (MSL RAD)",
+    "earth": "shielded by atmosphere and magnetic field"
+   },
+   {
+    "name": "Surface UV",
+    "target": "UV-C reaches the ground (almost no ozone)",
+    "earth": "UV-C absorbed by the ozone layer"
+   },
+   {
+    "name": "Planetary protection",
+    "target": "COSPAR Category IV; caves may be Special Regions",
+    "earth": "—"
+   }
+  ]
+ },
+ {
+  "id": "gale_bradbury_landing",
+  "name": "Gale crater (Bradbury Landing)",
+  "body": "mars",
+  "kind": "surface",
+  "group": "Landing sites",
+  "mission": "Mars Science Laboratory Curiosity landing site · Aeolis Palus, Gale crater",
+  "lat": -4.5895,
+  "lon": 137.4417,
+  "window_km": 50,
+  "coord_source": "Vasavada et al. 2014, JGR Planets 119, “Overview of the Mars Science Laboratory mission: Bradbury Landing to Yellowknife Bay and beyond” (4.5895°S, 137.4417°E)",
+  "notes": "Crater-floor plain below the 5 km layered mound of Aeolis Mons (Mount Sharp), with ancient lake mudstones and active dunes.",
+  "info_url": "https://doi.org/10.1002/2014JE004622",
+  "values": {
+   "slope_mean": 5.681985496461161,
+   "slope_p90": 11.882463338856613,
+   "relief": 3786.75,
+   "roughness": 1024.2880451705878,
+   "t_mean": null,
+   "t_max": null,
+   "t_swing": null,
+   "cave_temp": null,
+   "basalt_dist": 0.0,
+   "precip": 0.0,
+   "low_sun": 11.864310039763323,
+   "pressure": 8.385264406592233,
+   "ice": null,
+   "polar_day": 0.0,
+   "polar_night": 0.0,
+   "dep_frac": 4.081632653061225,
+   "dep_depth": 31.125,
+   "dust": 0.4,
+   "dust_storm": 1.0,
+   "wind": null,
+   "soil_moist": 0.0,
+   "ndvi": 0.0,
+   "low_biomass": 1.0
+  },
+  "extra": {
+   "Skylight (Mars cave catalog)": "—",
+   "Mean elevation (MOLA)": "-3,532 m above the Mars datum",
+   "Estimated surface pressure": "8.4 hPa",
+   "Thermal data": "Not yet included for Mars targets",
+   "MOLA cells used": "14 × 14 (each ~3.7 km)"
+  },
+  "limits": [
+   {
+    "name": "Gravity",
+    "target": "3.71 m/s² (0.38 g)",
+    "earth": "9.81 m/s²"
+   },
+   {
+    "name": "Atmosphere",
+    "target": "~6 hPa mean, 95% CO₂ (about 1–2 hPa on Arsia Mons)",
+    "earth": "at least ~330 hPa (summit of Everest)"
+   },
+   {
+    "name": "Radiation",
+    "target": "~0.64 mSv/day at the surface (MSL RAD)",
+    "earth": "shielded by atmosphere and magnetic field"
+   },
+   {
+    "name": "Surface UV",
+    "target": "UV-C reaches the ground (almost no ozone)",
+    "earth": "UV-C absorbed by the ozone layer"
+   },
+   {
+    "name": "Planetary protection",
+    "target": "COSPAR Category IV; caves may be Special Regions",
+    "earth": "—"
+   }
+  ]
+ },
+ {
+  "id": "meridiani_opportunity",
+  "name": "Meridiani Planum (Opportunity)",
+  "body": "mars",
+  "kind": "surface",
+  "group": "Landing sites",
+  "mission": "Mars Exploration Rover Opportunity landing site · Eagle crater, Meridiani Planum",
+  "lat": -1.9462,
+  "lon": -5.5266,
+  "window_km": 50,
+  "coord_source": "Squyres et al. 2004 (Opportunity Athena science overview, Science): lander at 1.9462°S, 354.4734°E (IAU 2000, MOLA-tied triangulation)",
+  "notes": "Very flat equatorial plain of sulfate-rich sandstones covered with hematite spherules, recording past acidic groundwater.",
+  "info_url": "https://www.jpl.nasa.gov/images/rovers-landing-hardware-at-eagle-crater-mars",
+  "values": {
+   "slope_mean": 0.45335261825804246,
+   "slope_p90": 1.4053738303115395,
+   "relief": 319.0,
+   "roughness": 84.21724776712084,
+   "t_mean": null,
+   "t_max": null,
+   "t_swing": null,
+   "cave_temp": null,
+   "basalt_dist": 0.0,
+   "precip": 0.0,
+   "low_sun": 11.662639599703201,
+   "pressure": 6.950216251870413,
+   "ice": null,
+   "polar_day": 0.0,
+   "polar_night": 0.0,
+   "dep_frac": 0.5102040816326531,
+   "dep_depth": 203.0,
+   "dust": 0.39,
+   "dust_storm": 1.0,
+   "wind": null,
+   "soil_moist": 0.0,
+   "ndvi": 0.0,
+   "low_biomass": 1.0
+  },
+  "extra": {
+   "Skylight (Mars cave catalog)": "—",
+   "Mean elevation (MOLA)": "-1,448 m above the Mars datum",
+   "Estimated surface pressure": "7.0 hPa",
+   "Thermal data": "Not yet included for Mars targets",
+   "MOLA cells used": "14 × 14 (each ~3.7 km)"
+  },
+  "limits": [
+   {
+    "name": "Gravity",
+    "target": "3.71 m/s² (0.38 g)",
+    "earth": "9.81 m/s²"
+   },
+   {
+    "name": "Atmosphere",
+    "target": "~6 hPa mean, 95% CO₂ (about 1–2 hPa on Arsia Mons)",
+    "earth": "at least ~330 hPa (summit of Everest)"
+   },
+   {
+    "name": "Radiation",
+    "target": "~0.64 mSv/day at the surface (MSL RAD)",
+    "earth": "shielded by atmosphere and magnetic field"
+   },
+   {
+    "name": "Surface UV",
+    "target": "UV-C reaches the ground (almost no ozone)",
+    "earth": "UV-C absorbed by the ozone layer"
+   },
+   {
+    "name": "Planetary protection",
+    "target": "COSPAR Category IV; caves may be Special Regions",
+    "earth": "—"
+   }
+  ]
+ },
+ {
+  "id": "elysium_insight",
+  "name": "Elysium Planitia (InSight)",
+  "body": "mars",
+  "kind": "surface",
+  "group": "Landing sites",
+  "mission": "InSight lander site · western Elysium Planitia",
+  "lat": 4.502,
+  "lon": 135.623,
+  "window_km": 50,
+  "coord_source": "Golombek et al. 2020, Nat. Commun. 11, 1014 (4.502°N, 135.623°E); refined to 4.502384°N, 135.623447°E in Golombek et al. 2020, Earth Space Sci.",
+  "notes": "One of the smoothest, flattest equatorial lava plains on Mars, chosen for safety; thin regolith over Hesperian–Amazonian basalt.",
+  "info_url": "https://doi.org/10.1038/s41467-020-14679-1",
+  "values": {
+   "slope_mean": 0.18553982134418195,
+   "slope_p90": 0.3292638015611092,
+   "relief": 85.5,
+   "roughness": 20.907118773677404,
+   "t_mean": null,
+   "t_max": null,
+   "t_swing": null,
+   "cave_temp": null,
+   "basalt_dist": 0.0,
+   "precip": 0.0,
+   "low_sun": 11.852894731835391,
+   "pressure": 7.736384702205114,
+   "ice": null,
+   "polar_day": 0.0,
+   "polar_night": 0.0,
+   "dep_frac": 0.0,
+   "dep_depth": 0.0,
+   "dust": 0.42,
+   "dust_storm": 1.0,
+   "wind": 0.6588,
+   "soil_moist": 0.0,
+   "ndvi": 0.0,
+   "low_biomass": 1.0
+  },
+  "extra": {
+   "Skylight (Mars cave catalog)": "—",
+   "Mean elevation (MOLA)": "-2,638 m above the Mars datum",
+   "Estimated surface pressure": "7.7 hPa",
+   "Thermal data": "Not yet included for Mars targets",
+   "MOLA cells used": "14 × 14 (each ~3.7 km)"
+  },
+  "limits": [
+   {
+    "name": "Gravity",
+    "target": "3.71 m/s² (0.38 g)",
+    "earth": "9.81 m/s²"
+   },
+   {
+    "name": "Atmosphere",
+    "target": "~6 hPa mean, 95% CO₂ (about 1–2 hPa on Arsia Mons)",
+    "earth": "at least ~330 hPa (summit of Everest)"
+   },
+   {
+    "name": "Radiation",
+    "target": "~0.64 mSv/day at the surface (MSL RAD)",
+    "earth": "shielded by atmosphere and magnetic field"
+   },
+   {
+    "name": "Surface UV",
+    "target": "UV-C reaches the ground (almost no ozone)",
+    "earth": "UV-C absorbed by the ozone layer"
+   },
+   {
+    "name": "Planetary protection",
+    "target": "COSPAR Category IV; caves may be Special Regions",
+    "earth": "—"
+   }
+  ]
+ },
+ {
+  "id": "phoenix_landing_site",
+  "name": "Phoenix landing site",
+  "body": "mars",
+  "kind": "surface",
+  "group": "Landing sites",
+  "mission": "Phoenix lander site · Vastitas Borealis, near Heimdal crater",
+  "lat": 68.22,
+  "lon": -125.75,
+  "window_km": 50,
+  "coord_source": "Smith et al. 2009, Science 325, 58 (“H2O at the Phoenix Landing Site”): 68.22°N, 234.25°E areocentric",
+  "notes": "Arctic plain of ice-cemented polygonal ground; water ice lies a few centimetres below the soil.",
+  "info_url": "https://doi.org/10.1126/science.1172339",
+  "values": {
+   "slope_mean": 0.7190461688811364,
+   "slope_p90": 1.4432588356964218,
+   "relief": 232.70000000000027,
+   "roughness": 56.023070965432005,
+   "t_mean": null,
+   "t_max": null,
+   "t_swing": null,
+   "cave_temp": null,
+   "basalt_dist": 0.0,
+   "precip": 0.0,
+   "low_sun": 34.86615551454501,
+   "pressure": 8.815595410955668,
+   "ice": null,
+   "polar_day": 18.63013698630137,
+   "polar_night": 14.520547945205479,
+   "dep_frac": 9.523809523809524,
+   "dep_depth": 34.895833333333336,
+   "dust": 0.19,
+   "dust_storm": 1.0,
+   "wind": 0.48,
+   "soil_moist": 0.0,
+   "ndvi": 0.0,
+   "low_biomass": 1.0
+  },
+  "extra": {
+   "Skylight (Mars cave catalog)": "—",
+   "Mean elevation (MOLA)": "-4,087 m above the Mars datum",
+   "Estimated surface pressure": "8.8 hPa",
+   "Thermal data": "Not yet included for Mars targets",
+   "MOLA cells used": "14 × 36 (each ~3.7 km)"
+  },
+  "limits": [
+   {
+    "name": "Gravity",
+    "target": "3.71 m/s² (0.38 g)",
+    "earth": "9.81 m/s²"
+   },
+   {
+    "name": "Atmosphere",
+    "target": "~6 hPa mean, 95% CO₂ (about 1–2 hPa on Arsia Mons)",
+    "earth": "at least ~330 hPa (summit of Everest)"
+   },
+   {
+    "name": "Radiation",
+    "target": "~0.64 mSv/day at the surface (MSL RAD)",
+    "earth": "shielded by atmosphere and magnetic field"
+   },
+   {
+    "name": "Surface UV",
+    "target": "UV-C reaches the ground (almost no ozone)",
+    "earth": "UV-C absorbed by the ozone layer"
+   },
+   {
+    "name": "Planetary protection",
+    "target": "COSPAR Category IV; caves may be Special Regions",
+    "earth": "—"
+   }
+  ]
+ },
+ {
+  "id": "utopia_zhurong",
+  "name": "Utopia Planitia (Zhurong)",
+  "body": "mars",
+  "kind": "surface",
+  "group": "Landing sites",
+  "mission": "Tianwen-1 Zhurong rover landing site · southern Utopia Planitia",
+  "lat": 25.066,
+  "lon": 109.925,
+  "window_km": 50,
+  "coord_source": "Liu et al. 2023, Natl. Sci. Rev. 10, nwad056 (109.925°E, 25.066°N; elevation −4099.4 m)",
+  "notes": "Low northern plain near the dichotomy boundary, with troughs, cones and wind ripples, thought to hold buried ice-related deposits.",
+  "info_url": "https://doi.org/10.1093/nsr/nwad056",
+  "values": {
+   "slope_mean": 0.27091083340031946,
+   "slope_p90": 0.4600484773313145,
+   "relief": 183.75,
+   "roughness": 15.902519885988198,
+   "t_mean": null,
+   "t_max": null,
+   "t_swing": null,
+   "cave_temp": null,
+   "basalt_dist": 0.0,
+   "precip": 0.0,
+   "low_sun": 13.085747988051978,
+   "pressure": 8.842115396329776,
+   "ice": null,
+   "polar_day": 0.0,
+   "polar_night": 0.0,
+   "dep_frac": 0.0,
+   "dep_depth": 0.0,
+   "dust": 0.32,
+   "dust_storm": 1.0,
+   "wind": 0.48,
+   "soil_moist": 0.0,
+   "ndvi": 0.0,
+   "low_biomass": 1.0
+  },
+  "extra": {
+   "Skylight (Mars cave catalog)": "—",
+   "Mean elevation (MOLA)": "-4,121 m above the Mars datum",
+   "Estimated surface pressure": "8.8 hPa",
+   "Thermal data": "Not yet included for Mars targets",
+   "MOLA cells used": "14 × 14 (each ~3.7 km)"
+  },
+  "limits": [
+   {
+    "name": "Gravity",
+    "target": "3.71 m/s² (0.38 g)",
+    "earth": "9.81 m/s²"
+   },
+   {
+    "name": "Atmosphere",
+    "target": "~6 hPa mean, 95% CO₂ (about 1–2 hPa on Arsia Mons)",
+    "earth": "at least ~330 hPa (summit of Everest)"
+   },
+   {
+    "name": "Radiation",
+    "target": "~0.64 mSv/day at the surface (MSL RAD)",
+    "earth": "shielded by atmosphere and magnetic field"
+   },
+   {
+    "name": "Surface UV",
+    "target": "UV-C reaches the ground (almost no ozone)",
+    "earth": "UV-C absorbed by the ozone layer"
+   },
+   {
+    "name": "Planetary protection",
+    "target": "COSPAR Category IV; caves may be Special Regions",
+    "earth": "—"
+   }
+  ]
+ },
+ {
+  "id": "arcadia_planitia",
+  "name": "Arcadia Planitia",
+  "body": "mars",
+  "kind": "surface",
+  "group": "Landing sites",
+  "mission": "Candidate region for human landing with shallow ground ice · northern lowlands",
+  "lat": 49.02,
+  "lon": -171.85,
+  "window_km": 50,
+  "coord_source": "USGS Gazetteer of Planetary Nomenclature, Arcadia Planitia feature centre (49.02°N, 188.15°E); a regional centre, not a specific landing point",
+  "notes": "Smooth mid-latitude lowland plain where orbital radar and fresh craters point to water ice within metres of the surface.",
+  "info_url": "https://planetarynames.wr.usgs.gov/Feature/348",
+  "values": {
+   "slope_mean": 0.116295490049363,
+   "slope_p90": 0.2239466636121233,
+   "relief": 35.100000000000364,
+   "roughness": 9.01323883220396,
+   "t_mean": null,
+   "t_max": null,
+   "t_swing": null,
+   "cave_temp": null,
+   "basalt_dist": 0.0,
+   "precip": 0.0,
+   "low_sun": 19.8664408972432,
+   "pressure": 8.780999531827346,
+   "ice": null,
+   "polar_day": 0.0,
+   "polar_night": 0.0,
+   "dep_frac": 0.35714285714285715,
+   "dep_depth": 11.0,
+   "dust": 0.23,
+   "dust_storm": 1.0,
+   "wind": null,
+   "soil_moist": 0.0,
+   "ndvi": 0.0,
+   "low_biomass": 1.0
+  },
+  "extra": {
+   "Skylight (Mars cave catalog)": "—",
+   "Mean elevation (MOLA)": "-4,044 m above the Mars datum",
+   "Estimated surface pressure": "8.8 hPa",
+   "Thermal data": "Not yet included for Mars targets",
+   "MOLA cells used": "14 × 20 (each ~3.7 km)"
+  },
+  "limits": [
+   {
+    "name": "Gravity",
+    "target": "3.71 m/s² (0.38 g)",
+    "earth": "9.81 m/s²"
+   },
+   {
+    "name": "Atmosphere",
+    "target": "~6 hPa mean, 95% CO₂ (about 1–2 hPa on Arsia Mons)",
+    "earth": "at least ~330 hPa (summit of Everest)"
+   },
+   {
+    "name": "Radiation",
+    "target": "~0.64 mSv/day at the surface (MSL RAD)",
+    "earth": "shielded by atmosphere and magnetic field"
+   },
+   {
+    "name": "Surface UV",
+    "target": "UV-C reaches the ground (almost no ozone)",
+    "earth": "UV-C absorbed by the ozone layer"
+   },
+   {
+    "name": "Planetary protection",
+    "target": "COSPAR Category IV; caves may be Special Regions",
+    "earth": "—"
+   }
+  ]
+ },
+ {
+  "id": "deuteronilus_mensae",
+  "name": "Deuteronilus Mensae",
+  "body": "mars",
+  "kind": "surface",
+  "group": "Landing sites",
+  "mission": "Mesas with debris-covered glaciers · dichotomy boundary, northern mid-latitudes",
+  "lat": 45.1095,
+  "lon": 23.9184,
+  "window_km": 50,
+  "coord_source": "USGS Gazetteer of Planetary Nomenclature, Deuteronilus Mensae feature centre (45.1095°N, 23.9184°E); a regional centre, not a specific landing point",
+  "notes": "Flat-topped mesas and valleys along the dichotomy boundary, surrounded by lobate debris aprons made of buried glacial ice.",
+  "info_url": "https://planetarynames.wr.usgs.gov/Feature/1509",
+  "values": {
+   "slope_mean": 2.393957104392326,
+   "slope_p90": 6.073680150508092,
+   "relief": 873.6999999999998,
+   "roughness": 262.4204415759386,
+   "t_mean": null,
+   "t_max": null,
+   "t_swing": null,
+   "cave_temp": null,
+   "basalt_dist": 0.0,
+   "precip": 0.0,
+   "low_sun": 17.864956907212573,
+   "pressure": 7.956546265205552,
+   "ice": null,
+   "polar_day": 0.0,
+   "polar_night": 0.0,
+   "dep_frac": 1.7857142857142858,
+   "dep_depth": 44.6,
+   "dust": 0.25,
+   "dust_storm": 1.0,
+   "wind": null,
+   "soil_moist": 0.0,
+   "ndvi": 0.0,
+   "low_biomass": 1.0
+  },
+  "extra": {
+   "Skylight (Mars cave catalog)": "—",
+   "Mean elevation (MOLA)": "-2,949 m above the Mars datum",
+   "Estimated surface pressure": "8.0 hPa",
+   "Thermal data": "Not yet included for Mars targets",
+   "MOLA cells used": "14 × 20 (each ~3.7 km)"
+  },
+  "limits": [
+   {
+    "name": "Gravity",
+    "target": "3.71 m/s² (0.38 g)",
+    "earth": "9.81 m/s²"
+   },
+   {
+    "name": "Atmosphere",
+    "target": "~6 hPa mean, 95% CO₂ (about 1–2 hPa on Arsia Mons)",
+    "earth": "at least ~330 hPa (summit of Everest)"
+   },
+   {
+    "name": "Radiation",
+    "target": "~0.64 mSv/day at the surface (MSL RAD)",
+    "earth": "shielded by atmosphere and magnetic field"
+   },
+   {
+    "name": "Surface UV",
+    "target": "UV-C reaches the ground (almost no ozone)",
+    "earth": "UV-C absorbed by the ozone layer"
+   },
+   {
+    "name": "Planetary protection",
+    "target": "COSPAR Category IV; caves may be Special Regions",
+    "earth": "—"
    }
   ]
  }

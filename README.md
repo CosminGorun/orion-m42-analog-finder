@@ -48,18 +48,36 @@ Apoi deschide http://localhost:8765.
 |---|---|---|
 | Relief Lună | NASA LRO LOLA `LDEM_75S_240M` (PDS) | 240 m, mediat la 3,6 km |
 | Temperaturi și gheață Lună | NASA LRO Diviner Polar Resource Product (PDS), descărcat parțial | ~0,5 km |
+| Relief Lună (global, pentru gropi) | NASA LRO LOLA `LDEM_16` (PDS) | 1,9 km, mediat la 3,8 km |
+| Temperaturi Lună (global) | NASA LRO Diviner Global Cumulative Product, 96 ore locale, descărcat parțial | 0,5° |
+| Relief Marte | NASA MGS MOLA MEGDR 16 ppd (PDS) | ~3,7 km |
+| Gropi lunare | LROC Lunar Pit Locations catalog | ~30 m |
+| Peșteri marțiene | USGS Mars Global Cave Candidate Catalog (Cushing) | — |
+| Vulcani bazaltici | Smithsonian Global Volcanism Program, vulcani holoceni | — |
 | Relief Pământ | NOAA ETOPO1 (ERDDAP), eșantionat la 2′ | ~3,7 km |
 | Temperatura suprafeței Pământ | NASA MODIS Terra MOD11C3 v061, lunar 2020–2024 (OPeNDAP) | 0,25°, agregat la 0,5° |
 | Precipitații Pământ | NASA GPM IMERG Final 3IMERGM v07, lunar 2020–2024 (OPeNDAP) | 0,5° |
 | Hartă de bază | NASA GIBS Blue Marble | — |
 
+## Ținte
+
+| Țintă | Tip | Corp |
+|---|---|---|
+| Malapert Massif | regiune de aterizare Artemis III | Luna |
+| Mare Tranquillitatis Pit | groapă / intrare în tub de lavă | Luna |
+| Marius Hills Pit | groapă într-un canal de lavă | Luna |
+| Mare Ingenii Pit | groapă pe fața ascunsă | Luna |
+| Arsia Mons „Jeanne” (APC075) | luminator de peșteră | Marte |
+
+Criteriile pe care o țintă nu le are (de exemplu temperaturile pe Marte) sunt marcate „not applicable” și nu intră în scor.
+
 ## Cum adaugi o țintă nouă
 
-1. Adaugă în `pipeline/targets.json` un obiect cu `id`, `name`, `body: "moon"`, `lat`, `lon`, `window_km`.
+1. Adaugă în `pipeline/targets.json` un obiect cu `id`, `name`, `body` (`moon` sau `mars`), `kind` (`surface` sau `subsurface`), `group`, `lat`, `lon`, `window_km`. Valorile din literatură (ex. temperatura din interiorul gropii) merg în `literature`.
 2. Rulează `pipeline/build_target.py`.
 3. Reîncarcă pagina: ținta apare în lista de sus.
 
-Fișierul LOLA acoperă tot polul sud (75–90°S), deci merge pentru toate cele 9 regiuni Artemis. Pentru Marte trebuie adăugate datele MOLA/THEMIS (pas viitor).
+Polul sud lunar (sub 75°S) folosește LOLA polar + Diviner PRP; restul Lunii folosește LOLA global + Diviner GCP; Marte folosește MOLA (fără date termice deocamdată).
 
 ## Limite cunoscute ale prototipului
 

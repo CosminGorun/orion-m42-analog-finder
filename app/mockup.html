@@ -1,0 +1,720 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Analog Finder — restructure mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Fira+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #0d1014; --surface-1: #12161b; --surface-2: #181d24; --surface-3: #202630;
+  --line: #262d37; --line-strong: #35404d;
+  --ink-1: #eef1f4; --ink-2: #b4bcc6; --ink-3: #7c8794;
+  --accent: #e8a33d; --accent-ink: #1b1305; --accent-soft: rgba(232,163,61,.14);
+  --seq-0: #173322; --seq-1: #1d5a35; --seq-2: #1f7d42; --seq-3: #27a24f; --seq-4: #5cc96c; --seq-5: #b7f0a8;
+  --good: #4fbf67; --warn: #e0a43a; --bad: #e5675e;
+  --font-sans: "Fira Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "Fira Code", ui-monospace, Consolas, monospace;
+  --r-sm: 6px; --r-md: 10px; --r-lg: 14px;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--ink-1); font: 14px/1.5 var(--font-sans); -webkit-font-smoothing: antialiased; }
+h1, h2, h3, p { margin: 0; }
+button { font: inherit; color: inherit; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+.notice { background: var(--accent-soft); color: var(--accent); font-size: 12.5px; padding: 6px 20px; border-bottom: 1px solid var(--line); }
+
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 12px 20px; background: var(--surface-1); border-bottom: 1px solid var(--line); }
+.brand { display: flex; align-items: baseline; gap: 12px; }
+.brand h1 { font-size: 18px; font-weight: 700; letter-spacing: -.01em; }
+.brand p { color: var(--ink-3); font-size: 12.5px; }
+.nav { display: flex; gap: 4px; background: var(--surface-2); padding: 3px; border-radius: var(--r-md); border: 1px solid var(--line); }
+.nav button { background: none; border: 0; padding: 6px 14px; border-radius: 7px; color: var(--ink-2); font-weight: 500; }
+.nav button[aria-selected="true"] { background: var(--surface-3); color: var(--ink-1); }
+
+.steps { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 0; border-bottom: 1px solid var(--line); background: var(--surface-1); }
+.step { padding: 14px 20px 16px; }
+.step + .step { border-left: 1px solid var(--line); }
+.step-h { display: flex; align-items: center; gap: 8px; font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; margin-bottom: 10px; }
+.step-n { display: inline-grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); font-size: 11px; font-weight: 700; }
+.row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.seg { display: inline-flex; background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--r-sm); padding: 2px; }
+.seg button { background: none; border: 0; padding: 5px 12px; border-radius: 4px; color: var(--ink-2); font-weight: 500; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+.seg button:disabled { opacity: .35; cursor: not-allowed; }
+select { background: var(--surface-2); color: var(--ink-1); border: 1px solid var(--line-strong); border-radius: var(--r-sm); padding: 7px 10px; font: inherit; max-width: 100%; }
+.chip { background: var(--surface-2); border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; color: var(--ink-2); font-weight: 500; white-space: nowrap; }
+.chip:hover { border-color: var(--line-strong); color: var(--ink-1); }
+.chip[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+.chip:disabled { opacity: .35; cursor: not-allowed; }
+.chip.all { border-style: dashed; }
+
+.view { display: none; }
+.view.on { display: block; }
+
+.explore { display: grid; grid-template-columns: 280px minmax(0, 1fr) 340px; min-height: 560px; }
+.panel { background: var(--surface-1); padding: 16px 18px; }
+.panel.left { border-right: 1px solid var(--line); }
+.panel.right { border-left: 1px solid var(--line); }
+.eyebrow { font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; margin-bottom: 8px; }
+.t-name { font-size: 17px; font-weight: 600; line-height: 1.25; }
+.t-tag { color: var(--accent); font-size: 13px; margin: 2px 0 10px; }
+.t-body { color: var(--ink-2); font-size: 13px; }
+.kv { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; font-size: 12.5px; margin-top: 8px; }
+.kv dt { color: var(--ink-3); }
+.kv dd { margin: 0; color: var(--ink-1); text-align: right; }
+hr { border: 0; border-top: 1px solid var(--line); margin: 14px 0; }
+
+#map { height: 100%; min-height: 560px; background: #0b0e12; }
+.mapwrap { position: relative; }
+.legend { position: absolute; left: 12px; bottom: 12px; z-index: 500; background: rgba(18,22,27,.92); border: 1px solid var(--line); border-radius: var(--r-md); padding: 8px 10px; font-size: 12px; color: var(--ink-2); }
+.legend b { display: block; color: var(--ink-1); font-weight: 600; margin-bottom: 5px; }
+.ramp { display: flex; gap: 2px; align-items: center; }
+.ramp i { width: 22px; height: 10px; border-radius: 2px; display: block; }
+.leaflet-container { font: inherit; background: #0b0e12; }
+.relief-tiles { filter: brightness(0.45) contrast(1.15); }
+.coast-dark { filter: invert(1) brightness(0.55); }
+.leaflet-tooltip { background: var(--surface-3); color: var(--ink-1); border: 1px solid var(--line-strong); box-shadow: none; font-size: 12.5px; }
+.leaflet-tooltip::before { display: none; }
+
+.rank { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.rank button { width: 100%; text-align: left; background: none; border: 1px solid transparent; border-radius: var(--r-sm); padding: 7px 8px; display: grid; grid-template-columns: 20px minmax(0,1fr) 34px; gap: 8px; align-items: center; }
+.rank button:hover { background: var(--surface-2); }
+.rank button[aria-current="true"] { background: var(--surface-2); border-color: var(--line-strong); }
+.rank .i { color: var(--ink-3); font-size: 12px; }
+.rank .n { font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rank .s { text-align: right; font-weight: 500; }
+.bar { grid-column: 2 / 4; height: 4px; background: var(--surface-3); border-radius: 2px; overflow: hidden; }
+.bar i { display: block; height: 100%; border-radius: 2px; }
+
+.detail h3 { font-size: 16px; font-weight: 600; }
+.detail .sub { color: var(--ink-3); font-size: 12.5px; margin-bottom: 10px; }
+.meter { display: grid; grid-template-columns: 118px minmax(0,1fr) 30px; gap: 8px; align-items: center; font-size: 12.5px; padding: 3px 0; color: var(--ink-2); }
+.meter .track { height: 8px; background: var(--surface-3); border-radius: 4px; overflow: hidden; }
+.meter .track i { display: block; height: 100%; border-radius: 4px; }
+.meter.na { opacity: .45; }
+.lists { display: grid; gap: 10px; margin-top: 12px; font-size: 12.5px; }
+.lists h4 { margin: 0 0 3px; font-size: 12px; font-weight: 600; }
+.lists .ok h4 { color: var(--good); }
+.lists .no h4 { color: var(--bad); }
+.lists p { color: var(--ink-2); }
+
+.pad { padding: 20px; max-width: 1180px; margin: 0 auto; }
+.pad h2 { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+.lead { color: var(--ink-2); margin-bottom: 16px; max-width: 70ch; }
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--surface-1); }
+table.mx { border-collapse: collapse; width: 100%; min-width: 860px; }
+.mx th, .mx td { padding: 8px 6px; text-align: center; font-size: 12.5px; border-bottom: 1px solid var(--line); }
+.mx thead th { color: var(--ink-3); font-weight: 600; font-size: 11.5px; background: var(--surface-2); }
+.mx thead th { vertical-align: top; color: var(--ink-1); }
+.mx thead small { display: block; font-weight: 400; font-size: 11px; color: var(--ink-3); line-height: 1.3; margin-top: 2px; }
+.mx th:first-child, .mx td:first-child { text-align: left; padding-left: 16px; }
+.mx td:first-child { font-weight: 500; font-size: 13.5px; }
+.mx tr:last-child td { border-bottom: 0; }
+.cell { display: inline-grid; place-items: center; width: 46px; height: 28px; border-radius: 5px; font-family: var(--font-mono); font-size: 12px; }
+.cell.na { background: transparent; border: 1px dashed var(--line-strong); color: var(--ink-3); }
+.count { font-family: var(--font-mono); color: var(--ink-1); }
+
+.gtabs { display: grid; grid-template-columns: repeat(auto-fit, minmax(128px, 1fr)); gap: 8px; margin-bottom: 18px; }
+.gtab { text-align: left; background: var(--surface-1); border: 1px solid var(--line); border-radius: var(--r-md); padding: 10px 12px; color: var(--ink-2); }
+.gtab b { display: block; font-weight: 600; color: var(--ink-1); font-size: 13.5px; }
+.gtab span { font-size: 12px; color: var(--ink-3); }
+.gtab:hover { border-color: var(--line-strong); }
+.gtab[aria-selected="true"] { border-color: var(--accent); background: var(--accent-soft); }
+.gtab[aria-selected="true"] b { color: var(--accent); }
+.crit { border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--surface-1); margin-bottom: 16px; overflow: hidden; }
+.crit-h { padding: 16px 20px 12px; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; align-items: flex-start; }
+.crit h3 { font-size: 17px; font-weight: 600; }
+.crit .what { color: var(--ink-2); font-size: 13.5px; max-width: 62ch; margin-top: 2px; }
+.meta { display: flex; gap: 6px; flex-wrap: wrap; }
+.tag { font-size: 11.5px; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--line-strong); color: var(--ink-2); white-space: nowrap; }
+.tag.live { border-color: var(--good); color: var(--good); }
+.flow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--surface-2); }
+.flow div { padding: 10px 20px; font-size: 12.5px; color: var(--ink-2); position: relative; }
+.flow div + div { border-left: 1px solid var(--line); }
+.flow b { display: block; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; margin-bottom: 2px; }
+.crit-b { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.play { padding: 16px 20px; border-right: 1px solid var(--line); }
+.play-h { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 10px; }
+.ctl { display: grid; grid-template-columns: 132px minmax(0, 1fr) 76px; gap: 10px; align-items: center; font-size: 12.5px; color: var(--ink-2); margin-bottom: 6px; }
+.ctl output { text-align: right; color: var(--ink-1); font-family: var(--font-mono); font-size: 12px; }
+input[type=range] { width: 100%; accent-color: var(--accent); }
+.presets { display: flex; gap: 6px; flex-wrap: wrap; margin: 4px 0 10px; }
+.presets button { background: var(--surface-2); border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; font-size: 12px; color: var(--ink-2); }
+.presets button:hover { border-color: var(--accent); color: var(--accent); }
+.viz { background: var(--bg); border: 1px solid var(--line); border-radius: var(--r-md); padding: 10px; margin-top: 8px; }
+.viz svg { display: block; width: 100%; height: auto; }
+.res { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 10px; }
+.res div { font-size: 12px; color: var(--ink-3); }
+.res b { display: block; font-family: var(--font-mono); font-size: 19px; font-weight: 500; color: var(--ink-1); }
+.res .hl b { color: var(--seq-4); }
+.say { margin-top: 8px; font-size: 13px; color: var(--ink-2); }
+.info { padding: 16px 20px; display: grid; gap: 12px; align-content: start; font-size: 13.5px; }
+.info h4 { margin: 0 0 2px; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; }
+.info p { color: var(--ink-2); }
+.limit { border-left: 3px solid var(--warn); padding: 2px 0 2px 12px; }
+.limit h4 { color: var(--warn); }
+details { border-top: 1px solid var(--line); padding-top: 10px; }
+summary { cursor: pointer; color: var(--ink-1); font-weight: 500; font-size: 13px; }
+details p { margin-top: 6px; }
+code { font-family: var(--font-mono); font-size: 12.5px; background: var(--surface-3); padding: 2px 6px; border-radius: 4px; color: var(--ink-1); }
+.formula { display: block; padding: 8px 10px; line-height: 1.6; white-space: normal; }
+
+@media (max-width: 1100px) {
+  .steps { grid-template-columns: 1fr; }
+  .step + .step { border-left: 0; border-top: 1px solid var(--line); }
+  .explore { grid-template-columns: 1fr; }
+  .panel.left, .panel.right { border: 0; border-top: 1px solid var(--line); }
+  #map { min-height: 380px; }
+  .crit-b { grid-template-columns: 1fr; }
+  .play { border-right: 0; border-bottom: 1px solid var(--line); }
+  .flow { grid-template-columns: 1fr; }
+  .flow div + div { border-left: 0; border-top: 1px solid var(--line); }
+}
+</style>
+</head>
+<body>
+
+<div class="notice">Mockup of the proposed structure. Site scores are illustrative placeholders, not computed results.</div>
+
+<header class="topbar">
+  <div class="brand">
+    <h1>Analog Finder</h1>
+    <p>Where on Earth to test for the Moon and Mars</p>
+  </div>
+  <nav class="nav" role="tablist" aria-label="Views">
+    <button role="tab" aria-selected="true" data-view="explore">Explore</button>
+    <button role="tab" aria-selected="false" data-view="compare">Compare sites</button>
+    <button role="tab" aria-selected="false" data-view="docs">Method and data</button>
+  </nav>
+</header>
+
+<section class="steps" aria-label="Setup">
+  <div class="step">
+    <div class="step-h"><span class="step-n">1</span>Destination</div>
+    <div class="row">
+      <div class="seg" role="group" aria-label="Body">
+        <button data-body="moon" aria-pressed="false">Moon</button>
+        <button data-body="mars" aria-pressed="true">Mars</button>
+      </div>
+      <select id="target" aria-label="Target site"></select>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <span style="color:var(--ink-3);font-size:12.5px">Scenario</span>
+      <div class="seg" role="group" aria-label="Scenario">
+        <button data-scn="normal" aria-pressed="true">Normal conditions</button>
+        <button data-scn="storm" aria-pressed="false">Dust storm</button>
+      </div>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-h"><span class="step-n">2</span>What do you want to test?</div>
+    <div class="row" id="chips"></div>
+  </div>
+</section>
+
+<main>
+  <section class="view on" id="v-explore">
+    <div class="explore">
+      <aside class="panel left" id="targetCard"></aside>
+      <div class="mapwrap">
+        <div id="map"></div>
+        <div class="legend">
+          <b id="legendTitle"></b>
+          <div class="ramp"><span>weak</span>
+            <i style="background:var(--seq-0)"></i><i style="background:var(--seq-1)"></i><i style="background:var(--seq-2)"></i><i style="background:var(--seq-3)"></i><i style="background:var(--seq-4)"></i><i style="background:var(--seq-5)"></i>
+            <span>strong</span></div>
+        </div>
+      </div>
+      <aside class="panel right">
+        <div class="eyebrow" id="rankTitle"></div>
+        <ol class="rank" id="rank"></ol>
+        <hr>
+        <div class="detail" id="detail"></div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="view" id="v-compare">
+    <div class="pad">
+      <h2>Which site is good at what</h2>
+      <p class="lead">Each row is a site, each column a test problem. A high number means the site is a good place to test that problem: for example, a high “Lifeless soil” score means almost no plants or microbes, which is what life-detection instruments need. The last column counts the problems a site scores 70 or higher on.</p>
+      <div class="tablewrap"><table class="mx" id="matrix"></table></div>
+    </div>
+  </section>
+
+  <section class="view" id="v-docs">
+    <div class="pad">
+      <h2>Method and data</h2>
+      <p class="lead">Pick a group, then move the sliders: every criterion shows its formula working on live numbers, next to how the data was measured, why it matters and where it stops being valid.</p>
+      <div class="gtabs" id="gtabs" role="tablist" aria-label="Criteria groups"></div>
+      <div id="docBody"></div>
+    </div>
+  </section>
+</main>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const CH = [
+  { id: 'terrain', name: 'Landing and terrain', short: 'Terrain', hint: 'slopes like the target' },
+  { id: 'craters', name: 'Craters', short: 'Craters', hint: 'crater-like hollows' },
+  { id: 'dust', name: 'Dust and wind', short: 'Dust', hint: 'dust storms, wind', marsOnly: true },
+  { id: 'cold', name: 'Cold and thermal cycling', short: 'Cold', hint: 'cold, big day–night swing' },
+  { id: 'light', name: 'Light and shadow', short: 'Light', hint: 'low Sun, long shadows' },
+  { id: 'ice', name: 'Ice and drilling', short: 'Ice', hint: 'ground ice' },
+  { id: 'caves', name: 'Caves', short: 'Caves', hint: 'lava tubes, pits' },
+  { id: 'life', name: 'Life-detection tests', short: 'Lifeless soil', hint: 'no plants, few microbes' },
+];
+const TARGETS = {
+  moon: [
+    ['Malapert Massif', 'Sunlit polar peak'],
+    ['Cabeus / Haworth', 'Permanently shadowed ice trap'],
+    ['Tranquility Base (Apollo 11)', 'Flat equatorial mare'],
+    ['Mare Tranquillitatis pit', 'Lava tube skylight'],
+    ['Marius Hills pit', 'Volcanic dome field skylight'],
+    ['Von Kármán (Chang’e-4)', 'Deep far-side basin floor'],
+    ['Shiv Shakti (Chandrayaan-3)', 'High-latitude highland'],
+  ],
+  mars: [
+    ['Meridiani (Opportunity)', 'Solar rover lost to dust'],
+    ['Jezero (Perseverance)', 'Crater lake delta'],
+    ['Gale (Curiosity)', 'Layered mountain and dunes'],
+    ['Elysium (InSight)', 'Smooth dusty plain'],
+    ['Phoenix site', 'Polar patterned ground over ice'],
+    ['Utopia (Zhurong)', 'Lowland plain'],
+    ['Arsia Mons skylights', 'High-altitude volcanic caves'],
+    ['Arcadia Planitia', 'Shallow-ice landing zone'],
+    ['Deuteronilus Mensae', 'Debris-covered glaciers'],
+  ],
+};
+const BREAKS = {
+  moon: [['Gravity', '1.62 m/s² (0.17 g)'], ['Atmosphere', 'vacuum'], ['Day length', '~29.5 Earth days'], ['Offload needed', '83.5%']],
+  mars: [['Gravity', '3.71 m/s² (0.38 g)'], ['Atmosphere', '~6 hPa, 95% CO₂'], ['Day length', '24.66 h'], ['Offload needed', '62.2%']],
+};
+// Illustrative placeholder scores: terrain, craters, dust, cold, light, ice, caves, life
+const SITES = [
+  ['Atacama, Yungay', 'Chile', -24.1, -69.9, [55, 20, 60, 45, 20, 10, 15, 96]],
+  ['Devon Island, Haughton', 'Canada', 75.38, -89.67, [78, 95, 15, 82, 90, 80, 10, 55]],
+  ['Lanzarote, Corona', 'Spain', 29.18, -13.48, [74, 50, 40, 15, 15, 5, 97, 45]],
+  ['Bodélé Depression', 'Chad', 17.0, 18.0, [20, 10, 97, 10, 15, 0, 0, 70]],
+  ['University Valley', 'Antarctica', -77.86, 160.72, [70, 30, 25, 98, 85, 95, 20, 94]],
+  ['Askja', 'Iceland', 65.03, -16.75, [80, 72, 45, 60, 62, 40, 55, 50]],
+  ['Pisgah lava field', 'USA', 34.75, -116.38, [66, 60, 58, 20, 18, 0, 85, 48]],
+  ['Qaidam Basin', 'China', 37.5, 93.5, [60, 30, 82, 70, 25, 20, 5, 75]],
+  ['Meteor Crater', 'USA', 35.03, -111.02, [62, 98, 40, 25, 20, 0, 5, 35]],
+  ['Bockfjorden, Svalbard', 'Norway', 79.4, 13.5, [76, 35, 10, 80, 93, 78, 30, 50]],
+  ['Namib gravel plains', 'Namibia', -24.7, 15.3, [45, 25, 75, 15, 18, 0, 0, 72]],
+  ['Mauna Kea', 'USA', 19.82, -155.47, [82, 65, 35, 55, 22, 15, 60, 58]],
+  ['Taklamakan', 'China', 39.0, 83.0, [25, 10, 90, 40, 20, 0, 0, 68]],
+];
+const RAMP = ['#173322', '#1d5a35', '#1f7d42', '#27a24f', '#5cc96c', '#b7f0a8'];
+const S = { body: 'mars', target: 0, scn: 'normal', ch: 'dust', sel: 0 };
+const $ = (q) => document.querySelector(q);
+
+const applies = (c) => !(c.marsOnly && S.body === 'moon');
+const active = () => CH.filter(applies);
+const color = (v) => RAMP[Math.min(5, Math.floor(v / 100 * 6))];
+const ink = (v) => (v >= 67 ? '#0d1014' : '#eef1f4');
+const strongCount = (sc) => active().filter((c) => sc[CH.indexOf(c)] >= 70).length;
+function value(site) {
+  const sc = site[4];
+  if (S.ch === 'all') return Math.round(100 * strongCount(sc) / active().length);
+  return sc[CH.findIndex((c) => c.id === S.ch)];
+}
+function label(site) {
+  return S.ch === 'all' ? strongCount(site[4]) + '/' + active().length : String(value(site));
+}
+
+// Same projection and basemap as the live app (NASA GIBS, EPSG:4326, 512 px tiles)
+const crs = L.extend({}, L.CRS.EPSG4326, {
+  transformation: new L.Transformation(1, 180, -1, 90),
+  scale: (z) => Math.pow(2, z) / 0.5625,
+  zoom: (s) => Math.log(s * 0.5625) / Math.LN2,
+});
+const bounds = [[-90, -180], [90, 180]];
+const map = L.map('map', { crs, center: [0, 0], zoom: 1, minZoom: 0, maxZoom: 6, maxBounds: [[-110, -240], [110, 240]], zoomSnap: 0.25 });
+map.fitBounds(bounds, { padding: [4, 4] });
+window.addEventListener('resize', () => map.invalidateSize());
+const gibs = 'https://gibs.earthdata.nasa.gov/wmts/epsg4326/best/';
+const tileOpts = { tileSize: 512, bounds, noWrap: true, maxNativeZoom: 6 };
+L.tileLayer(gibs + 'ASTER_GDEM_Greyscale_Shaded_Relief/default/2004-08-01/31.25m/{z}/{y}/{x}.jpg', { ...tileOpts, className: 'relief-tiles', attribution: 'Basemap: NASA GIBS, ASTER GDEM shaded relief' }).addTo(map);
+L.tileLayer(gibs + 'Coastlines_15m/default/2004-08-01/15.625m/{z}/{y}/{x}.png', { ...tileOpts, className: 'coast-dark' }).addTo(map);
+const layer = L.layerGroup().addTo(map);
+
+function renderSetup() {
+  document.querySelectorAll('[data-body]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.body === S.body));
+  document.querySelectorAll('[data-scn]').forEach((b) => {
+    b.setAttribute('aria-pressed', b.dataset.scn === S.scn);
+    b.disabled = S.body === 'moon' && b.dataset.scn === 'storm';
+    b.title = b.disabled ? 'No atmosphere on the Moon' : '';
+  });
+  $('#target').innerHTML = ['moon', 'mars'].map((b) =>
+    '<optgroup label="' + (b === 'moon' ? 'Moon' : 'Mars') + '">' +
+    TARGETS[b].map((t, i) => '<option value="' + b + ':' + i + '"' + (b === S.body && i === S.target ? ' selected' : '') + '>' + t[0] + '</option>').join('') +
+    '</optgroup>').join('');
+  $('#chips').innerHTML = CH.map((c) =>
+    '<button class="chip" data-ch="' + c.id + '" aria-pressed="' + (S.ch === c.id) + '"' +
+    (applies(c) ? '' : ' disabled title="Not applicable on the Moon"') + '>' + c.name + '</button>').join('') +
+    '<button class="chip all" data-ch="all" aria-pressed="' + (S.ch === 'all') + '">All combined</button>';
+}
+
+function renderTarget() {
+  const t = TARGETS[S.body][S.target];
+  $('#targetCard').innerHTML =
+    '<div class="eyebrow">Target</div>' +
+    '<div class="t-name">' + t[0] + '</div>' +
+    '<div class="t-tag">' + t[1] + '</div>' +
+    '<p class="t-body">' + (S.body === 'mars' ? 'Mars' : 'Moon') +
+    (S.body === 'mars' ? ', ' + (S.scn === 'storm' ? 'dust storm scenario' : 'normal conditions') : '') +
+    '. Every site on Earth is compared with the values measured here.</p><hr>' +
+    '<div class="eyebrow">Where the analogy breaks</div>' +
+    '<dl class="kv">' + BREAKS[S.body].map((r) => '<dt>' + r[0] + '</dt><dd>' + r[1] + '</dd>').join('') + '</dl>' +
+    '<p class="t-body" style="margin-top:10px">No place on Earth reproduces these. They are shown, not scored.</p>';
+}
+
+function renderMap(order) {
+  layer.clearLayers();
+  order.forEach((idx) => {
+    const s = SITES[idx], v = value(s);
+    const m = L.circleMarker([s[2], s[3]], {
+      radius: 6 + v / 100 * 14, color: idx === S.sel ? '#e8a33d' : '#0d1014', weight: idx === S.sel ? 3 : 1,
+      fillColor: color(v), fillOpacity: 0.92,
+    }).addTo(layer);
+    m.bindTooltip(s[0] + ' · ' + label(s), { direction: 'top', offset: [0, -6] });
+    m.on('click', () => { S.sel = idx; render(); });
+  });
+}
+
+function renderRank(order) {
+  const c = CH.find((x) => x.id === S.ch);
+  $('#rankTitle').textContent = S.ch === 'all' ? 'Sites covering the most problems' : 'Best sites for ' + c.name.toLowerCase();
+  $('#legendTitle').textContent = S.ch === 'all' ? 'Problems covered (score 70+)' : c.name;
+  $('#rank').innerHTML = order.slice(0, 6).map((idx, i) => {
+    const s = SITES[idx], v = value(s);
+    return '<li><button data-site="' + idx + '" aria-current="' + (idx === S.sel) + '">' +
+      '<span class="i num">' + (i + 1) + '</span><span class="n">' + s[0] + '</span><span class="s num">' + label(s) + '</span>' +
+      '<span class="bar"><i style="width:' + v + '%;background:' + color(v) + '"></i></span></button></li>';
+  }).join('');
+}
+
+function renderDetail() {
+  const s = SITES[S.sel], sc = s[4];
+  const strong = active().filter((c) => sc[CH.indexOf(c)] >= 70).map((c) => c.name.toLowerCase());
+  const weak = active().filter((c) => sc[CH.indexOf(c)] < 40).map((c) => c.name.toLowerCase());
+  $('#detail').innerHTML =
+    '<h3>' + s[0] + '</h3><div class="sub">' + s[1] + ' · ' + Math.abs(s[2]).toFixed(2) + '°' + (s[2] >= 0 ? 'N' : 'S') + ', ' +
+    Math.abs(s[3]).toFixed(2) + '°' + (s[3] >= 0 ? 'E' : 'W') + '</div>' +
+    CH.map((c, i) => applies(c)
+      ? '<div class="meter"><span>' + c.name + '</span><span class="track"><i style="width:' + sc[i] + '%;background:' + color(sc[i]) + '"></i></span><span class="num">' + sc[i] + '</span></div>'
+      : '<div class="meter na"><span>' + c.name + '</span><span>not applicable on the Moon</span><span></span></div>').join('') +
+    '<div class="lists">' +
+    '<div class="ok"><h4>You can test here</h4><p>' + (strong.length ? strong.join(', ') : 'nothing stands out') + '.</p></div>' +
+    '<div class="no"><h4>You cannot test here</h4><p>' + (weak.length ? weak.join(', ') : 'no clear gaps') + '.</p></div>' +
+    '</div>';
+}
+
+function renderMatrix() {
+  const rows = SITES.map((s, i) => i).sort((a, b) => strongCount(SITES[b][4]) - strongCount(SITES[a][4]));
+  $('#matrix').innerHTML =
+    '<thead><tr><th>Site</th>' + CH.map((c) => '<th title="' + c.name + '">' + c.short + '<small>' + c.hint + '</small></th>').join('') + '<th>Covers</th></tr></thead><tbody>' +
+    rows.map((idx) => {
+      const s = SITES[idx];
+      return '<tr><td>' + s[0] + '</td>' + CH.map((c, i) => applies(c)
+        ? '<td><span class="cell" style="background:' + color(s[4][i]) + ';color:' + ink(s[4][i]) + '">' + s[4][i] + '</span></td>'
+        : '<td><span class="cell na">n/a</span></td>').join('') +
+        '<td class="count">' + strongCount(s[4]) + ' / ' + active().length + '</td></tr>';
+    }).join('') + '</tbody>';
+}
+
+function render() {
+  if (S.body === 'moon') { if (S.ch === 'dust') S.ch = 'light'; S.scn = 'normal'; }
+  const order = SITES.map((s, i) => i).sort((a, b) => value(SITES[b]) - value(SITES[a]));
+  renderSetup(); renderTarget(); renderMap(order); renderRank(order); renderDetail(); renderMatrix();
+}
+
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('button'); if (!b || b.disabled) return;
+  if (b.dataset.body) { S.body = b.dataset.body; S.target = 0; render(); }
+  else if (b.dataset.scn) { S.scn = b.dataset.scn; render(); }
+  else if (b.dataset.ch) { S.ch = b.dataset.ch; const o = SITES.map((s, i) => i).sort((x, y) => value(SITES[y]) - value(SITES[x])); S.sel = o[0]; render(); }
+  else if (b.dataset.site) { S.sel = +b.dataset.site; render(); }
+  else if (b.dataset.view) {
+    document.querySelectorAll('.nav button').forEach((n) => n.setAttribute('aria-selected', n === b));
+    document.querySelectorAll('.view').forEach((v) => v.classList.toggle('on', v.id === 'v-' + b.dataset.view));
+    document.querySelector('.steps').style.display = b.dataset.view === 'docs' ? 'none' : '';
+    if (b.dataset.view === 'explore') map.invalidateSize();
+  }
+});
+$('#target').addEventListener('change', (e) => { const [b, i] = e.target.value.split(':'); S.body = b; S.target = +i; render(); });
+
+S.sel = 3;
+render();
+
+// ---------- Method and data: interactive criterion cards ----------
+const clip = (x) => Math.max(0, Math.min(1, x));
+const f = (x, d = 2) => Number(x).toFixed(d);
+const G = '#5cc96c', A = '#e8a33d', I2 = '#b4bcc6', I3 = '#7c8794', LN = '#35404d';
+
+// score curve with a moving dot; fn maps x -> 0..1
+function curve(fn, x0, x1, x, xlab, log) {
+  const W = 420, H = 150, L = 34, B = 26, T = 10, R = 10;
+  const tx = (v) => L + (log ? (Math.log10(v) - Math.log10(x0)) / (Math.log10(x1) - Math.log10(x0)) : (v - x0) / (x1 - x0)) * (W - L - R);
+  const ty = (s) => T + (1 - s) * (H - T - B);
+  let d = '';
+  for (let i = 0; i <= 80; i++) {
+    const v = log ? Math.pow(10, Math.log10(x0) + i / 80 * (Math.log10(x1) - Math.log10(x0))) : x0 + i / 80 * (x1 - x0);
+    d += (i ? 'L' : 'M') + tx(v).toFixed(1) + ' ' + ty(fn(v)).toFixed(1);
+  }
+  const cx = tx(Math.max(x0, Math.min(x1, x))), cy = ty(fn(x));
+  return '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Score curve">' +
+    '<line x1="' + L + '" y1="' + ty(0) + '" x2="' + (W - R) + '" y2="' + ty(0) + '" stroke="' + LN + '"/>' +
+    '<line x1="' + L + '" y1="' + ty(1) + '" x2="' + (W - R) + '" y2="' + ty(1) + '" stroke="' + LN + '" stroke-dasharray="3 4"/>' +
+    '<text x="' + (L - 6) + '" y="' + (ty(1) + 4) + '" fill="' + I3 + '" font-size="11" text-anchor="end">1</text>' +
+    '<text x="' + (L - 6) + '" y="' + (ty(0) + 4) + '" fill="' + I3 + '" font-size="11" text-anchor="end">0</text>' +
+    '<text x="' + L + '" y="' + (H - 6) + '" fill="' + I3 + '" font-size="11">' + x0 + '</text>' +
+    '<text x="' + (W - R) + '" y="' + (H - 6) + '" fill="' + I3 + '" font-size="11" text-anchor="end">' + x1 + '</text>' +
+    '<text x="' + (W / 2) + '" y="' + (H - 6) + '" fill="' + I2 + '" font-size="11" text-anchor="middle">' + xlab + '</text>' +
+    '<path d="' + d + '" fill="none" stroke="' + G + '" stroke-width="2"/>' +
+    '<line x1="' + cx + '" y1="' + ty(0) + '" x2="' + cx + '" y2="' + cy + '" stroke="' + A + '" stroke-dasharray="2 3"/>' +
+    '<circle cx="' + cx + '" cy="' + cy + '" r="6" fill="' + A + '"/></svg>';
+}
+function bars(rows, max, unit) {
+  const W = 420, rh = 30;
+  return '<svg viewBox="0 0 ' + W + ' ' + (rows.length * rh + 4) + '" role="img" aria-label="Comparison bars">' + rows.map((r, i) => {
+    const w = Math.max(2, r[1] / max * 230);
+    return '<text x="0" y="' + (i * rh + 19) + '" fill="' + I2 + '" font-size="12">' + r[0] + '</text>' +
+      '<rect x="120" y="' + (i * rh + 7) + '" width="' + w + '" height="16" rx="3" fill="' + (r[2] || G) + '"/>' +
+      '<text x="' + (126 + w) + '" y="' + (i * rh + 19) + '" fill="#eef1f4" font-size="12" font-family="Fira Code, monospace">' + r[3] + (unit || '') + '</text>';
+  }).join('') + '</svg>';
+}
+const res = (items) => '<div class="res">' + items.map((r) => '<div' + (r[2] ? ' class="hl"' : '') + '><b>' + r[1] + '</b>' + r[0] + '</div>').join('') + '</div>';
+
+const PLAY = {
+  slope: {
+    ctl: [['rise', 'Rise over 100 m', 0, 120, 1, 36, ' m']],
+    run: (v) => {
+      const a = Math.atan(v.rise / 100) * 180 / Math.PI, y = 130 - Math.min(120, v.rise);
+      return '<div class="viz"><svg viewBox="0 0 420 150" role="img" aria-label="Slope triangle"><path d="M40 130 L340 130 L340 ' + y + ' Z" fill="#1d5a35" stroke="' + G + '" stroke-width="2"/>' +
+        '<text x="190" y="146" fill="' + I3 + '" font-size="11" text-anchor="middle">100 m</text><text x="348" y="' + ((130 + y) / 2 + 4) + '" fill="' + I3 + '" font-size="11">' + v.rise + ' m</text>' +
+        '<text x="92" y="124" fill="' + A + '" font-size="13" font-family="Fira Code, monospace">' + f(a, 1) + '°</text></svg></div>' +
+        res([['slope angle', f(a, 1) + '°', 1], ['gradient', v.rise + '%']]) +
+        '<p class="say">The pipeline does this for every pixel of the elevation model, then keeps the mean and the 90th percentile of the window.</p>';
+    },
+  },
+  shadow: {
+    ctl: [['e', 'Sun elevation', 0.5, 45, 0.5, 1.5, '°'], ['h', 'Obstacle height', 0.5, 10, 0.5, 2, ' m']],
+    presets: [['Lunar south pole', { e: 1.5 }], ['Devon Island, spring noon', { e: 10 }], ['Mid-latitude noon', { e: 45 }]],
+    run: (v) => {
+      const Lm = v.h / Math.tan(v.e * Math.PI / 180), px = Math.min(330, 12 + Math.log10(1 + Lm) * 105), hp = 12 + v.h * 9;
+      const sx = 60 + 330 * Math.cos(v.e * Math.PI / 180) * 0.2, sy = 128 - 110 * Math.sin(v.e * Math.PI / 180) - 6;
+      return '<div class="viz"><svg viewBox="0 0 420 150" role="img" aria-label="Shadow length"><line x1="10" y1="130" x2="410" y2="130" stroke="' + LN + '"/>' +
+        '<rect x="60" y="130" width="' + px + '" height="6" fill="#000" stroke="' + LN + '"/>' +
+        '<rect x="50" y="' + (130 - hp) + '" width="10" height="' + hp + '" fill="' + I2 + '"/>' +
+        '<circle cx="' + (20 + sx * 0.1) + '" cy="' + sy + '" r="9" fill="' + A + '"/>' +
+        '<text x="' + (60 + px / 2) + '" y="148" fill="' + I3 + '" font-size="11" text-anchor="middle">shadow (log scale)</text></svg></div>' +
+        res([['shadow length', f(Lm, Lm < 10 ? 1 : 0) + ' m', 1], ['times the height', f(Lm / v.h, 1) + '×']]) +
+        '<p class="say">' + (v.e < 10 ? 'Counts as “low Sun” in the score (below 10°). Long shadows hide hazards from cameras.' : 'Above 10°: not counted as low Sun.') + '</p>';
+    },
+  },
+  swing: {
+    ctl: [['dt', 'Day–night swing', 0, 300, 5, 90, ' °C'], ['a', 'Expansion coefficient', 5, 30, 1, 23, ' µm/m·K']],
+    presets: [['Earth desert', { dt: 40 }], ['Mars', { dt: 90 }], ['Moon', { dt: 280 }], ['Steel', { a: 12 }], ['Aluminium', { a: 23 }]],
+    run: (v) => '<div class="viz">' + bars([['Earth, largest', 40, '#1f7d42', '~40'], ['Mars', 90, '#27a24f', '80–100'], ['Moon', 280, G, '~280'], ['Your value', v.dt, A, v.dt]], 300, ' °C') + '</div>' +
+      res([['length change per metre, each cycle', f(v.a * v.dt / 1000, 2) + ' mm', 1]]) +
+      '<p class="say">Strain = coefficient × swing. Repeated every day, this is what cracks solder joints and loosens seals.</p>',
+  },
+  dust: {
+    ctl: [['t', 'Dust optical depth τ', 0.05, 11, 0.05, 0.5, '']],
+    presets: [['Clear Mars day', { t: 0.5 }], ['Severe Earth storm', { t: 4 }], ['Mars, June 2018', { t: 10.8 }]],
+    run: (v) => {
+      const direct = Math.exp(-v.t), sc = clip(1 - Math.abs(Math.log10(v.t / 0.5)) / Math.log10(20));
+      return '<div class="viz"><svg viewBox="0 0 420 96" role="img" aria-label="Sunlight dimming"><rect x="0" y="0" width="420" height="96" fill="rgb(' + Math.round(40 + 150 * Math.min(1, v.t / 6)) + ',' + Math.round(34 + 70 * Math.min(1, v.t / 6)) + ',28)" opacity="' + (0.25 + 0.6 * Math.min(1, v.t / 6)) + '"/>' +
+        '<circle cx="70" cy="48" r="26" fill="' + A + '" opacity="' + Math.max(0.06, direct) + '"/><circle cx="70" cy="48" r="26" fill="none" stroke="' + A + '" stroke-dasharray="3 4"/>' +
+        '<rect x="130" y="40" width="270" height="16" rx="3" fill="#202630"/><rect x="130" y="40" width="' + Math.max(1, 270 * direct) + '" height="16" rx="3" fill="' + A + '"/>' +
+        '<text x="130" y="30" fill="' + I2 + '" font-size="12">Direct sunlight reaching the ground</text></svg></div>' +
+        res([['direct beam, Sun overhead', (direct * 100 < 0.1 ? '<0.1' : f(direct * 100, direct < 0.1 ? 1 : 0)) + '%', 1], ['match with a target at τ = 0.5', f(sc)]]) +
+        '<p class="say">Direct light falls as <code>e^(−τ)</code>. Scattered light still arrives, which is why Opportunity kept about 3% of its power (645 → 22 Wh) instead of none.</p>';
+    },
+  },
+  wind: {
+    ctl: [['v', 'Wind speed on Mars', 0, 40, 1, 25, ' m/s']],
+    presets: [['Typical day', { v: 3 }], ['Afternoon', { v: 7 }], ['Strong gust', { v: 25 }]],
+    run: (v) => {
+      const e = 0.12 * v.v;
+      return '<div class="viz">' + bars([['On Mars', v.v, '#27a24f', f(v.v, 0)], ['Feels like, Earth', e, A, f(e, 1)]], 40, ' m/s') + '</div>' +
+        res([['Earth-equivalent push', f(e * 3.6, 0) + ' km/h', 1], ['Mars speed', f(v.v * 3.6, 0) + ' km/h']]) +
+        '<p class="say">Force goes with <code>½·ρ·v²</code> and Mars air is 60–80 times thinner, so the wind is fast but weak. What matters is the sand and dust it moves.</p>';
+    },
+  },
+  moisture: {
+    ctl: [['m', 'Soil moisture', 0, 0.4, 0.005, 0.03, ' m³/m³']],
+    run: (v) => {
+      const fn = (x) => clip((0.10 - x) / 0.08);
+      return '<div class="viz">' + curve(fn, 0, 0.4, v.m, 'soil moisture, m³/m³') + '</div>' + res([['score', f(fn(v.m)), 1]]) +
+        '<p class="say">' + (v.m <= 0.02 ? 'Dry enough for radar to see deep.' : v.m < 0.10 ? 'Some water: radar loses depth.' : 'Too wet: water absorbs the radar signal near the surface.') + ' Thresholds 0.02 and 0.10 are our proposal, to be calibrated.</p>';
+    },
+  },
+  ratio: {
+    ctl: [['r', 'Red reflectance', 0.02, 0.6, 0.01, 0.32, ''], ['b', 'Blue reflectance', 0.02, 0.6, 0.01, 0.12, '']],
+    presets: [['Reddish, iron-rich', { r: 0.32, b: 0.12 }], ['Grey basalt', { r: 0.1, b: 0.09 }], ['Bright salt', { r: 0.55, b: 0.52 }]],
+    run: (v) => {
+      const c = 'rgb(' + Math.round(Math.min(255, v.r * 420)) + ',' + Math.round(Math.min(255, (v.r + v.b) / 2 * 400)) + ',' + Math.round(Math.min(255, v.b * 420)) + ')';
+      return '<div class="viz"><svg viewBox="0 0 420 70" role="img" aria-label="Surface colour"><rect x="0" y="5" width="120" height="60" rx="6" fill="' + c + '"/><text x="136" y="30" fill="' + I2 + '" font-size="12">Approximate surface colour</text><text x="136" y="50" fill="' + I3 + '" font-size="11">from the two band values</text></svg></div>' +
+        res([['red / blue ratio', f(v.r / v.b), 1]]) +
+        '<p class="say">A ratio cancels most lighting and slope differences. Score thresholds for this index are not set yet.</p>';
+    },
+  },
+  ndvi: {
+    ctl: [['r', 'Red reflectance', 0.02, 0.5, 0.01, 0.2, ''], ['n', 'Near-infrared', 0.02, 0.6, 0.01, 0.22, '']],
+    presets: [['Bare rock', { r: 0.2, n: 0.22 }], ['Sparse scrub', { r: 0.14, n: 0.2 }], ['Forest', { r: 0.04, n: 0.45 }]],
+    run: (v) => {
+      const nd = (v.n - v.r) / (v.n + v.r), fn = (x) => clip((0.2 - x) / 0.1);
+      return '<div class="viz">' + curve(fn, -0.2, 0.8, nd, 'NDVI') + '</div>' +
+        res([['NDVI', f(nd)], ['score', f(fn(nd)), 1]]) +
+        '<p class="say">' + (nd <= 0.1 ? 'Bare ground: full score.' : nd < 0.2 ? 'Sparse vegetation: partial score.' : 'Vegetated: score 0.') + ' Plants absorb red and reflect near-infrared, so the gap between the two bands grows with plant cover.</p>';
+    },
+  },
+  microbe: {
+    ctl: [['ai', 'Aridity index (log)', -2.7, 0, 0.05, -2.3, ''], ['soc', 'Soil organic carbon', 0.5, 40, 0.5, 1, ' g/kg'], ['t', 'Mean air temperature', -30, 30, 1, 16, ' °C'], ['v', 'Plant growth seen (0 no, 1 yes)', 0, 1, 1, 0, '']],
+    presets: [['Hyperarid desert', { ai: -2.3, soc: 1, t: 16, v: 0 }], ['Polar desert', { ai: -1.2, soc: 1, t: -23, v: 0 }], ['Farmland', { ai: -0.2, soc: 20, t: 11, v: 1 }]],
+    run: (v) => {
+      const AI = Math.pow(10, v.ai);
+      const Wt = clip((Math.log10(0.2) - v.ai) / (Math.log10(0.2) - Math.log10(0.002)));
+      const C = clip((Math.log10(20) - Math.log10(v.soc)) / Math.log10(20)), T = clip((5 - v.t) / 30), V = v.v ? 0 : 1;
+      const LB = 0.45 * Wt + 0.30 * C + 0.15 * T + 0.10 * V;
+      return '<div class="viz">' + bars([['Water, ×0.45', Wt, G, f(Wt)], ['Carbon, ×0.30', C, G, f(C)], ['Cold, ×0.15', T, G, f(T)], ['No plants, ×0.10', V, G, V]], 1) + '</div>' +
+        res([['low-biomass score', f(LB), 1], ['aridity index', f(AI, 3)]]) +
+        '<p class="say">' + (LB >= 0.8 ? 'Candidate near-lifeless soil.' : LB >= 0.5 ? 'Low biomass.' : 'Ordinary living soil.') + ' This is an estimate from climate and soil, not a count of microbes.</p>';
+    },
+  },
+  fill: {
+    ctl: [['lvl', 'Fill level', 0, 100, 1, 100, '%']],
+    run: (v) => {
+      const top = 46, deep = 104, y = deep - (deep - top) * v.lvl / 100;
+      return '<div class="viz"><svg viewBox="0 0 420 130" role="img" aria-label="Closed depression filling"><defs><clipPath id="bowl"><path d="M120 46 Q150 104 210 104 Q270 104 300 46 Z"/></clipPath></defs>' +
+        '<rect x="120" y="' + y + '" width="180" height="' + (deep - y) + '" fill="#1f7d42" clip-path="url(#bowl)"/>' +
+        '<path d="M10 60 L90 52 L120 46 Q150 104 210 104 Q270 104 300 46 L330 52 L410 64" fill="none" stroke="' + I2 + '" stroke-width="2"/>' +
+        '<line x1="120" y1="46" x2="300" y2="46" stroke="' + A + '" stroke-dasharray="3 4"/><text x="306" y="42" fill="' + A + '" font-size="11">spill level</text></svg></div>' +
+        res([['depth measured', f((deep - top) * v.lvl / 100 * 5, 0) + ' m', 1]]) +
+        '<p class="say">The elevation model is “flooded” until water would spill. Filled minus original gives the depth of every closed hollow, with the same formula on Earth, Moon and Mars.</p>';
+    },
+  },
+  cave: {
+    ctl: [['h', 'Time in the lunar day', 0, 29.5, 0.5, 7, ' days']],
+    run: (v) => {
+      const ph = v.h / 29.5 * 2 * Math.PI, surf = v.h < 14.75 ? -170 + 290 * Math.sin(Math.PI * v.h / 14.75) : -170;
+      return '<div class="viz">' + bars([['Surface (schematic)', surf + 180, surf > 0 ? A : '#378ADD', f(surf, 0)], ['Inside the pit', 17 + 180, G, '17']], 310, ' °C') + '</div>' +
+        res([['surface minus pit', f(surf - 17, 0) + ' °C', 1]]) +
+        '<p class="say">The surface curve here is a simplified sketch between about −170 and +120 °C. The +17 °C pit value is modelled from Diviner data (Horvath et al., 2022).</p>';
+    },
+  },
+};
+
+const DOCS = [
+  { g: 'Terrain', items: [
+    { n: 'Slope', tags: ['Moon and Mars'], live: 1, play: 'slope', what: 'How steep the ground is, as a mean and as the steepest 10% of the area.',
+      flow: ['Laser altimeters (LOLA, MOLA) time a pulse from orbit. Earth: NOAA ETOPO relief.', 'Gradient per pixel on a ~3.7 km grid over a ~50 km window.', 'Match: closer to the target value scores higher.'],
+      f: 'slope = arctan( √( (dz/dx)² + (dz/dy)² ) )', why: 'Slope decides landing safety and whether a rover can climb. Steep walls also expose rock layers.',
+      used: 'The same function and the same ~3.7 km scale on all three bodies. A finer model on Earth alone would make Earth look rougher than it is.', lim: 'At this scale boulders and small craters are invisible.' },
+    { n: 'Closed depressions (craters)', tags: ['Moon and Mars', 'Planned'], play: 'fill', what: 'How much of the area sits in closed hollows, and how deep they are.',
+      flow: ['Derived from the same elevation models.', 'Depression filling, then filled minus original.', 'Match on area fraction and mean depth.'],
+      f: 'depth = filled relief − relief;  f = share of pixels deeper than 10 m', why: 'Craters are the main landing hazard and the main obstacle for rovers. At the lunar poles, rims are lit and floors hold ice.',
+      used: 'Earth has about 190 confirmed impact craters, against roughly 340 per 10,000 km² on the Moon. Crater density cannot be matched, hollow shape can.', lim: 'Measures shape, not origin: calderas, sinkholes and dry basins count too.' },
+  ] },
+  { g: 'Light and shadow', items: [
+    { n: 'Low Sun and long shadows', tags: ['Moon and Mars'], live: 1, play: 'shadow', what: 'Share of daylight hours with the Sun less than 10° above the horizon.',
+      flow: ['No instrument: pure geometry from latitude and axial tilt.', 'Sun elevation every 5 minutes for a full year.', 'Match with the target value.'],
+      f: 'sin e = sin φ · sin δ + cos φ · cos δ · cos H;   L = h / tan e', why: 'At the lunar south pole the Sun always grazes the horizon. Long shadows and hard contrast challenge cameras and navigation.',
+      used: 'Geometry is exact and works on any body by changing only the tilt: Earth 23.44°, Moon 1.54°, Mars 25.19°.', lim: 'The current version ignores terrain. No place on Earth is permanently shadowed, and Earth shade is not cold like a lunar crater floor.' },
+  ] },
+  { g: 'Temperature', items: [
+    { n: 'Day–night temperature swing', tags: ['Moon and Mars'], live: 1, play: 'swing', what: 'Difference between daytime and night-time ground temperature.',
+      flow: ['MODIS measures thermal infrared emitted by the ground, once by day and once by night. Moon: Diviner radiometer.', 'Monthly means 2020–2024, day minus night.', 'Match with the target value.'],
+      f: 'swing = mean( T_day − T_night );   strain = α × swing', why: 'The thermal cycle fatigues materials: solder joints, seals and joints fail after many cycles.',
+      used: 'Ground temperature, not air temperature: hardware sits on the ground, and dry ground swings far more than air.', lim: 'Earth tops out near 40 °C. Mars reaches 80–100 °C and the Moon about 280 °C, so even the best site reproduces part of the shock.' },
+  ] },
+  { g: 'Atmosphere', items: [
+    { n: 'Dust exposure', tags: ['Mars only', 'Planned'], play: 'dust', what: 'How much airborne dust dims the sunlight, as dust optical depth.',
+      flow: ['Earth: MERRA-2 reanalysis, dust-only optical depth. Mars: infrared retrievals from orbit (Montabone).', 'Daily values: mean, 95th percentile, dusty days, longest spell.', 'Normal: match with the target. Storm: more is better.'],
+      f: 'normal = 1 − |log10(τ_Earth / τ_target)| / log10(20);   storm = 0.30·P95 + 0.30·days + 0.25·spell + 0.15·mean', why: 'Dust in the air cuts solar power. Settled dust is a second, slower problem that ended InSight.',
+      used: 'MERRA-2 separates dust from smoke and pollution and has daily values since 1980. Days and spells are scored because rare violent storms matter more than constant haze.', lim: 'Earth storms reach τ 3–5 for hours to days. Mars reached 10.8 for months in 2018. Earth tests dimming, deposition and cleaning, not months of darkness.' },
+    { n: 'Wind', tags: ['Mars only', 'Planned'], play: 'wind', what: 'The Earth wind that pushes on hardware as hard as a given Mars wind.',
+      flow: ['Mars: lander weather stations. Earth: MERRA-2 wind at 10 m.', 'Convert by air density, then compare with Earth’s 95th percentile.', 'Match with the target value.'],
+      f: 'v_equivalent = v_Mars × √( ρ_Mars / ρ_Earth ) ≈ 0.12 × v_Mars', why: 'Serves parachute, landing and tall-structure tests. Sand lifted by wind soils panels and built the ripples that trapped Opportunity and Spirit.',
+      used: 'Comparing raw speeds would mislead, because the same speed pushes far less in thin air.', lim: 'Not applicable on the Moon. Reanalysis surface winds on Mars are weakly constrained; lander values exist for a few sites only.' },
+  ] },
+  { g: 'Water and ice', items: [
+    { n: 'Soil moisture', tags: ['Moon and Mars', 'Planned'], play: 'moisture', what: 'Water in the top 5 cm of soil. Also the proxy for radar transparency.',
+      flow: ['SMAP measures natural microwave emission at 1.4 GHz. Wet soil emits less.', 'Multi-year mean, aggregated from 9 km to the grid.', 'Less is better.'],
+      f: 'score = clip( (0.10 − θ) / (0.10 − 0.02), 0, 1 )', why: 'Liquid water absorbs radar. Ground-penetrating radar tests need dry soil, dry salt or frozen ground.',
+      used: 'SMAP measures soil water directly. Rainfall alone does not tell how wet the ground stays.', lim: 'Thresholds are our proposal and need calibration on real data.' },
+  ] },
+  { g: 'Surface and minerals', items: [
+    { n: 'Iron oxide index', tags: ['Mars only', 'Planned'], play: 'ratio', what: 'How red the surface is, a sign of iron oxides.',
+      flow: ['Sentinel-2 records reflected sunlight in 13 bands at 10–20 m.', 'Cloud-free yearly median per band, then the ratio.', 'More is better, for iron-rich targets only.'],
+      f: 'index = Red / Blue   (Sentinel-2: B4 / B2)', why: 'Iron oxides give Mars its colour. Clays, a companion index, form in water and preserve organics.',
+      used: 'Band ratios cancel most lighting differences. Computed for candidate sites only, since global coverage at 10 m is too heavy for a prototype.', lim: 'Shows colour, does not confirm the mineral. That needs field analysis.' },
+  ] },
+  { g: 'Life', items: [
+    { n: 'Absence of vegetation', tags: ['Moon and Mars', 'Planned'], play: 'ndvi', what: 'Whether plants cover the ground, from the NDVI index.',
+      flow: ['MODIS records reflected sunlight in red and near-infrared. A passive sensor: it emits nothing.', 'Annual maximum, median of 3 years, snow and water masked.', 'Less is better: full score up to 0.1, zero from 0.2.'],
+      f: 'NDVI = (NIR − Red) / (NIR + Red);   score = clip( (0.2 − NDVI) / 0.1, 0, 1 )', why: 'Vegetation scatters radar, adds organic matter to the soil, and roots change how wheels sink.',
+      used: 'Annual maximum, not the mean, so seasonal plants are not hidden. 0.1 is the usual bare-ground limit; stricter values fall below sensor noise.', lim: 'Snow, ice and water also give low NDVI. NDVI sees plants only, not microbes.' },
+    { n: 'Soil microbial life', tags: ['Moon and Mars', 'Planned'], play: 'microbe', what: 'An estimate of how close to lifeless the soil is.',
+      flow: ['No direct measurement exists globally. Inputs: aridity index, soil organic carbon, air temperature, plant growth.', 'Each input scaled between fixed thresholds.', 'Weighted sum. Direction flips for extremophile studies.'],
+      f: 'score = 0.45·W + 0.30·C + 0.15·T + 0.10·V', why: 'Life-detection instruments need a low background. NDVI can read zero over soil that is full of microbes.',
+      used: 'Global microbial biomass maps have very few samples in deserts and polar regions. Water and organic carbon are the best predictors.', lim: 'A proxy, not a count, and the formula is our proposal. No natural surface on Earth is sterile; confirming needs field sampling.' },
+  ] },
+  { g: 'Subsurface', items: [
+    { n: 'Cave interior temperature', tags: ['Moon and Mars'], live: 1, play: 'cave', what: 'How stable the temperature is inside a pit or lava tube.',
+      flow: ['Moon: thermal model built on Diviner data. Earth: mean annual surface temperature as a proxy.', 'A cave settles near the annual mean above it.', 'Match with the target value.'],
+      f: 'T_cave ≈ mean annual surface temperature', why: 'A stable interior is what makes a pit attractive as a shelter, while the surface swings by roughly 290 K.',
+      used: 'Rock damps the daily cycle. Measurements inside caves exist for a handful of places only.', lim: 'A proxy on Earth, not a measurement in the cave. The cave behind the lunar pit has not been observed.' },
+  ] },
+];
+
+let curG = 3;
+function renderDocs() {
+  $('#gtabs').innerHTML = DOCS.map((g, i) => '<button class="gtab" role="tab" data-g="' + i + '" aria-selected="' + (i === curG) + '"><b>' + g.g + '</b><span>' + g.items.length + (g.items.length > 1 ? ' criteria' : ' criterion') + '</span></button>').join('');
+  $('#docBody').innerHTML = DOCS[curG].items.map((c, ci) => {
+    const p = PLAY[c.play];
+    return '<article class="crit" data-ci="' + ci + '"><div class="crit-h"><div><h3>' + c.n + '</h3><p class="what">' + c.what + '</p></div>' +
+      '<div class="meta">' + (c.live ? '<span class="tag live">In the app</span>' : '') + c.tags.map((t) => '<span class="tag">' + t + '</span>').join('') + '</div></div>' +
+      '<div class="flow"><div><b>1 · Measured</b>' + c.flow[0] + '</div><div><b>2 · Processed</b>' + c.flow[1] + '</div><div><b>3 · Scored</b>' + c.flow[2] + '</div></div>' +
+      '<div class="crit-b"><div class="play"><div class="play-h">Try it</div>' +
+      p.ctl.map((k) => '<label class="ctl"><span>' + k[1] + '</span><input type="range" data-k="' + k[0] + '" min="' + k[2] + '" max="' + k[3] + '" step="' + k[4] + '" value="' + k[5] + '"><output></output></label>').join('') +
+      (p.presets ? '<div class="presets">' + p.presets.map((ps, pi) => '<button data-preset="' + pi + '">' + ps[0] + '</button>').join('') + '</div>' : '') +
+      '<div class="out"></div></div>' +
+      '<div class="info"><div><h4>Formula</h4><code class="formula">' + c.f + '</code></div><div><h4>Why it matters</h4><p>' + c.why + '</p></div>' +
+      '<div class="limit"><h4>Where it stops being valid</h4><p>' + c.lim + '</p></div>' +
+      '<details><summary>What we used and why</summary><p>' + c.used + '</p></details></div></div></article>';
+  }).join('');
+  document.querySelectorAll('#docBody .crit').forEach(runPlay);
+}
+function runPlay(card) {
+  const c = DOCS[curG].items[+card.dataset.ci], p = PLAY[c.play], v = {};
+  card.querySelectorAll('input[type=range]').forEach((inp, i) => {
+    v[inp.dataset.k] = +inp.value;
+    const step = p.ctl[i][4];
+    inp.nextElementSibling.textContent = (step < 0.01 ? (+inp.value).toFixed(3) : step < 1 ? (+inp.value).toFixed(2).replace(/0$/, '') : inp.value) + p.ctl[i][6];
+  });
+  card.querySelector('.out').innerHTML = p.run(v);
+}
+$('#v-docs').addEventListener('input', (e) => { if (e.target.matches('input[type=range]')) runPlay(e.target.closest('.crit')); });
+$('#v-docs').addEventListener('click', (e) => {
+  const t = e.target.closest('[data-g]'); if (t) { curG = +t.dataset.g; renderDocs(); return; }
+  const b = e.target.closest('[data-preset]'); if (!b) return;
+  const card = b.closest('.crit'), set = PLAY[DOCS[curG].items[+card.dataset.ci].play].presets[+b.dataset.preset][1];
+  Object.keys(set).forEach((k) => { card.querySelector('input[data-k="' + k + '"]').value = set[k]; });
+  runPlay(card);
+});
+renderDocs();
+</script>
+</body>
+</html>

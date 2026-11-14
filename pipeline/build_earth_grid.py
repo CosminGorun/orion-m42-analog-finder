@@ -95,8 +95,35 @@ def load_modis() -> tuple[np.ndarray, np.ndarray, int]:
         nclim = np.stack([np.nanmean(night[m], axis=0) for m in range(12)])
         t_mean = np.nanmean((dclim + nclim) / 2, axis=0)
         t_max = np.nanmax(dclim, axis=0)
+        t_swing = np.nanmean(dclim - nclim, axis=0)          # diferenta medie zi-noapte
     print(f"MODIS: {len(files)} luni, grid {t_mean.shape}")
-    return _to_cells(t_mean), _to_cells(t_max), len(files)
+    return _to_cells(t_mean), _to_cells(t_max), _to_cells(t_swing), len(files)
+
+
+EFFUSIVE = ("shield", "volcanic field", "fissure", "pyroclastic cone", "lava cone", "cone")
+BASALTIC = ("Basalt / Picro-Basalt", "Trachybasalt / Tephrite Basanite")
+
+
+def load_basaltic_volcanoes() -> np.ndarray:
+    """Vulcani holoceni bazaltici efuzivi (scuturi, campuri vulcanice, fisuri) - unde se formeaza tuburi de lava."""
+    path = RAW / "gvp_holocene_volcanoes.json"
+    if not path.exists():
+        path = RAW / "gvp" / "holocene_volcanoes.json"
+    feats = json.loads(path.read_text(encoding="utf8"))["features"]
+    pts = []
+    for f in feats:
+        p = f["properties"]
+        vt = (p.get("Primary_Volcano_Type") or "").lower()
+        if p.get("Major_Rock_Type") in BASALTIC and any(k in vt for k in EFFUSIVE):
+            pts.append((p["Latitude"], p["Longitude"]))
+    print(f"GVP: {len(pts)} vulcani bazaltici efuzivi din {len(feats)}")
+    return np.radians(np.array(pts))
+
+
+def nearest_km(lat: float, lon: float, pts_rad: np.ndarray) -> float:
+    la, lo = np.radians(lat), np.radians(lon)
+    a = np.sin((pts_rad[:, 0] - la) / 2) ** 2 + np.cos(la) * np.cos(pts_rad[:, 0]) * np.sin((pts_rad[:, 1] - lo) / 2) ** 2
+    return float(12742 * np.arcsin(np.sqrt(a.min())))
 
 
 def load_gpm() -> tuple[np.ndarray, int]:
@@ -121,8 +148,9 @@ def load_gpm() -> tuple[np.ndarray, int]:
 
 def main() -> None:
     lat, alt = load_etopo()
-    tmean, tmax, n_modis = load_modis()
+    tmean, tmax, tswing, n_modis = load_modis()
     precip, n_gpm = load_gpm()
+    volc = load_basaltic_volcanoes()
 
     ids = {c["id"]: [] for c in CRITERIA}
     cells = []
@@ -152,9 +180,15 @@ def main() -> None:
                 ids["t_mean"].append(round(float(tmean[i, j]), 1))
                 ids["t_max"].append(round(float(tmax[i, j]), 1))
                 ids["ice"].append(1 if tmean[i, j] < -5 else 0)
+                # o pestera ajunge la temperatura medie anuala a suprafetei de deasupra ei
+                ids["cave_temp"].append(round(float(tmean[i, j]), 1))
+                sw = tswing[i, j]
+                ids["t_swing"].append(round(float(sw), 1) if np.isfinite(sw) else None)
             else:
-                for k in ("t_mean", "t_max", "ice"):
+                for k in ("t_mean", "t_max", "ice", "cave_temp", "t_swing"):
                     ids[k].append(None)
+            lon_c = -180 + (j + 0.5) * RES
+            ids["basalt_dist"].append(round(min(nearest_km(lat_c, lon_c, volc), 3000.0)))
             p = precip[i, j]
             ids["precip"].append(round(float(p)) if np.isfinite(p) else None)
         if i % 30 == 0:

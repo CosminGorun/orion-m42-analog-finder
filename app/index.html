@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Fira+Sans:wght@400;500;600;700&display=swap">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=5">
 </head>
 <body>
   <a class="skip" href="#map">Skip to map</a>
@@ -23,16 +23,17 @@
       </svg>
       <div>
         <h1>Analog Finder</h1>
-        <p>Places on Earth that resemble future landing sites</p>
+        <p>Places on Earth that resemble future landing sites and lunar &amp; Martian caves</p>
       </div>
     </div>
 
-    <div class="toolbar" role="toolbar" aria-label="Map controls">
-      <label class="field">
-        <span>Target site</span>
-        <select id="target"></select>
-      </label>
+    <nav class="mainnav" role="tablist" aria-label="Pages">
+      <button role="tab" data-view="explore" aria-selected="true">Explore</button>
+      <button role="tab" data-view="compare" aria-selected="false">Compare sites</button>
+      <button role="tab" data-view="docs" aria-selected="false">Method and data</button>
+    </nav>
 
+    <div class="toolbar" id="toolbar" role="toolbar" aria-label="Map controls">
       <div class="field">
         <span id="view-label">View</span>
         <div class="segmented" id="view-modes" role="radiogroup" aria-labelledby="view-label">
@@ -68,7 +69,30 @@
     </div>
   </header>
 
-  <main class="layout">
+  <section class="setup" id="setup" aria-label="Destination and test problem">
+    <div class="setup-step">
+      <div class="setup-h"><span class="setup-n">1</span>Destination</div>
+      <div class="setup-row">
+        <div class="segmented" id="bodies" role="radiogroup" aria-label="Body"></div>
+        <select id="target" aria-label="Target site"></select>
+      </div>
+      <div class="setup-row" id="scenario-row" hidden>
+        <span class="setup-label">Scenario</span>
+        <div class="segmented" id="scenarios" role="radiogroup" aria-label="Scenario">
+          <button role="radio" data-scenario="normal" aria-checked="true">Normal conditions</button>
+          <button role="radio" data-scenario="storm" aria-checked="false">Dust storm</button>
+        </div>
+      </div>
+      <p class="setup-note" id="target-note"></p>
+    </div>
+    <div class="setup-step">
+      <div class="setup-h"><span class="setup-n">2</span>What do you want to test?</div>
+      <div class="setup-row" id="problems"></div>
+      <p class="setup-note" id="problem-note"></p>
+    </div>
+  </section>
+
+  <main class="layout" id="view-explore">
     <aside class="panel" aria-label="Analysis">
       <section class="kpis" aria-label="Summary">
         <div class="kpi"><span class="kpi-label">Best match</span><span class="kpi-value" id="kpi-best">—</span></div>
@@ -85,7 +109,7 @@
       <section id="tab-sites" class="tab" role="tabpanel">
         <div class="filters">
           <label class="check"><input type="checkbox" id="only-new"> New sites only <small>(more than 300 km from a known analog site)</small></label>
-          <label class="check"><input type="checkbox" id="show-known" checked> Show known analog sites</label>
+          <label class="check"><input type="checkbox" id="show-known" checked> Show known analog sites and caves</label>
           <label class="check"><input type="checkbox" id="show-ranks" checked> Number the top 10 on the map</label>
         </div>
         <ol id="sites" class="sites"></ol>
@@ -111,7 +135,7 @@
           <span class="legend-note" id="legend-note"></span>
         </summary>
         <ul class="legend-scale" id="legend-scale"></ul>
-        <div class="legend-known"><span class="dot-known"></span> Known analog site</div>
+        <div class="legend-known"><span class="dot-known"></span> Known analog site <span class="cave-pin"></span> Known cave analog</div>
         <label class="legend-opacity">Layer opacity
           <input type="range" id="opacity" min="0.3" max="1" step="0.05" value="0.9">
         </label>
@@ -125,7 +149,26 @@
     </div>
   </main>
 
+  <section class="page" id="view-compare" aria-label="Compare sites" hidden>
+    <div class="page-in">
+      <h2>Which site is good at what</h2>
+      <p class="page-lead" id="compare-lead"></p>
+      <div class="mx-wrap"><table class="mx" id="matrix"></table></div>
+      <p class="page-foot">Scores are the match with the selected target, computed from the same data as the map. A ring marks cells in the top 5% of Earth's land for that problem. Click a row to open the site on the map.</p>
+    </div>
+  </section>
+
+  <section class="page" id="view-docs" aria-label="Method and data" hidden>
+    <div class="page-in">
+      <h2>Method and data</h2>
+      <p class="page-lead">Pick a group, then move the sliders. Each criterion is shown working on the real data: the grey bars are how Earth's land is distributed, the green curve is the match score against the selected target.</p>
+      <div class="d-tabs" id="d-tabs" role="tablist" aria-label="Criteria groups"></div>
+      <div id="d-body"></div>
+    </div>
+  </section>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-  <script src="app.js"></script>
+  <script src="app.js?v=5"></script>
+  <script src="docs.js?v=5"></script>
 </body>
 </html>

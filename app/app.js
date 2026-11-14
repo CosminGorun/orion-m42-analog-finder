@@ -15,6 +15,7 @@ const S = {
   target: null, weights: {}, posOf: null, sub: null,
   score: null, maxScore: 1, robustness: null, clusters: [], clusterOf: null,
   mode: "similarity", criterion: null, topShare: 0.01, selected: undefined,
+  body: null, problem: "all", pr: {}, cover: null, coverN: 0, view: "explore", scenario: "normal",
   map: null, overlay: null, base: {}, knownLayer: null, pinLayer: null, selMarker: null,
 };
 
@@ -91,9 +92,23 @@ function upper(q, x) { let a = 0, b = q.length; while (a < b) { const m = (a + b
 
 function targetInfo(c) {
   const t = S.target.values[c.id], st = S.grid.stats[c.id];
+  if (t === null || t === undefined) return { t: null, clamped: null, outside: false, st, na: true };
   const clamped = Math.max(st.min, Math.min(st.max, t));
-  return { t, clamped, outside: t < st.min || t > st.max, st };
+  return { t, clamped, outside: t < st.min || t > st.max, st, na: false };
 }
+// Criteria the target does not define (null) are left out of its score, weights and views.
+// "lower"/"higher" criteria score against fixed thresholds, so they need no target value; they apply by body and scenario.
+const oneSided = (c) => c.mode === "lower" || c.mode === "higher";
+const applicable = (c) => {
+  if (!S.target) return false;
+  if (c.bodies && !c.bodies.includes(S.target.body)) return false;
+  if (c.scenario && c.scenario !== S.scenario) return false;
+  if (oneSided(c)) return true;
+  const v = S.target.values[c.id];
+  return v !== null && v !== undefined;
+};
+const targetText = (c, info) => (c.mode === "lower" ? "lower is better" : c.mode === "higher" ? "higher is better" : fmtVal(c, info.t));
+const activeCriteria = () => S.criteria.filter(applicable);
 
 // Criterion score = geometric mean of (a) closeness in percentile rank and (b) closeness in actual value,
 // so 2,600 m and 5,300 m of relief are not treated as equal just because both sit in Earth's top 1%.
@@ -102,6 +117,18 @@ function computeSub() {
   S.sub = new Float32Array(n * K);
   S.criteria.forEach((c, k) => {
     const vals = S.grid.values[c.id], info = targetInfo(c);
+    if (!applicable(c)) { for (let p = 0; p < n; p++) S.sub[p * K + k] = NaN; return; }
+    if (oneSided(c)) {
+      // ramp between two fixed thresholds: 1 at the good end, 0 at the bad end
+      const span = (c.hi - c.lo) || 1;
+      for (let p = 0; p < n; p++) {
+        const x = vals[p];
+        if (x === null) { S.sub[p * K + k] = NaN; continue; }
+        const r = Math.max(0, Math.min(1, (x - c.lo) / span));
+        S.sub[p * K + k] = c.mode === "lower" ? 1 - r : r;
+      }
+      return;
+    }
     if (c.binary) {
       for (let p = 0; p < n; p++) S.sub[p * K + k] = vals[p] === null ? NaN : (vals[p] === info.clamped ? 1 : 0);
       return;
@@ -121,7 +148,7 @@ function computeSub() {
 // Total = weighted mean of available criteria, gently penalised when data is missing.
 function scoreAll(weights, out) {
   const n = S.grid.cells.length, K = S.criteria.length;
-  const w = S.criteria.map((c) => weights[c.id]);
+  const w = S.criteria.map((c) => (applicable(c) ? weights[c.id] : 0));
   const wAll = w.reduce((a, b) => a + b, 0) || 1;
   for (let p = 0; p < n; p++) {
     let num = 0, den = 0;
@@ -132,6 +159,143 @@ function scoreAll(weights, out) {
     out[p] = den ? (num / den) * Math.sqrt(den / wAll) : 0;
   }
   return out;
+}
+
+// ---------- test problems ----------
+// A test problem is a preset of weights over the criteria. "pending" problems need data the pipeline does not load yet.
+const COVER_SHARE = 0.05;   // a cell "covers" a problem when it is in the top 5% of land for it
+// "core" lists the criteria a problem cannot do without (default: all of them). A problem whose core criteria
+// are not in the data yet shows as "soon"; one whose core criteria do not apply to the target is switched off.
+const PROBLEMS = [
+  { id: "all", name: "Full match", hint: "every criterion the target defines" },
+  { id: "terrain", name: "Landing and terrain", short: "Terrain", hint: "slopes, relief, roughness", crit: { slope_mean: 1, slope_p90: 1, relief: 1, roughness: 1 } },
+  { id: "craters", name: "Craters", short: "Craters", hint: "closed hollows, steep walls", crit: { dep_frac: 1, dep_depth: 1, slope_p90: 0.5, relief: 0.5 }, core: ["dep_frac", "dep_depth"] },
+  { id: "dust", name: "Dust and wind", short: "Dust", hint: "airborne dust, storms, wind", crit: { dust: 1, dust_storm: 1, wind: 0.5 }, why: "No atmosphere at this target" },
+  { id: "cold", name: "Cold and thermal cycling", short: "Cold", hint: "ground temperature, day–night swing", crit: { t_mean: 1, t_max: 1, t_swing: 1 } },
+  { id: "light", name: "Light and shadow", short: "Light", hint: "low Sun, polar day and night", crit: { low_sun: 1, polar_day: 0.5, polar_night: 0.5 }, core: ["low_sun"] },
+  { id: "dry", name: "Dryness and thin air", short: "Dry air", hint: "rain, soil moisture, pressure", crit: { precip: 1, soil_moist: 1, pressure: 0.5 }, core: ["precip", "pressure"] },
+  { id: "ice", name: "Ice and drilling", short: "Ice", hint: "ground ice, cold ground", crit: { ice: 1, t_mean: 0.5 }, core: ["ice"], needs: (t) => t.values.ice === 1, why: "No ground ice at this target" },
+  { id: "caves", name: "Caves", short: "Caves", hint: "lava-tube terrain, cave temperature", crit: { cave_temp: 1, basalt_dist: 1 }, needs: (t) => t.kind === "subsurface", why: "This target is not a pit or cave" },
+  { id: "life", name: "Life-detection tests", short: "Lifeless soil", hint: "no plants, few microbes", crit: { ndvi: 1, low_biomass: 1 } },
+];
+const problemById = (id) => PROBLEMS.find((p) => p.id === id);
+const coreIds = (pr) => pr.core || Object.keys(pr.crit);
+const problemPending = (pr) => pr.id !== "all" && !coreIds(pr).some((id) => S.criteria.some((c) => c.id === id));
+function problemWeights(pr) {
+  const w = {};
+  S.criteria.forEach((c) => { w[c.id] = pr.id === "all" ? c.weight : (pr.crit[c.id] || 0); });
+  return w;
+}
+function problemOk(pr) {
+  if (pr.id === "all") return true;
+  if (problemPending(pr)) return false;
+  if (pr.needs && !pr.needs(S.target)) return false;
+  return S.criteria.some((c) => coreIds(pr).includes(c.id) && applicable(c));
+}
+const coverIds = () => Object.keys(S.pr).filter((id) => id !== "all");
+
+// One score per problem for every cell, plus how many problems each cell covers.
+function computeProblems() {
+  const n = S.grid.cells.length;
+  S.pr = {};
+  PROBLEMS.forEach((pr) => {
+    if (!problemOk(pr)) return;
+    const score = scoreAll(problemWeights(pr), new Float32Array(n));
+    S.pr[pr.id] = { score, thr: topThreshold(score, COVER_SHARE) };
+  });
+  const ids = coverIds();
+  S.cover = new Uint8Array(n);
+  ids.forEach((id) => { const { score, thr } = S.pr[id]; if (thr > 0) for (let p = 0; p < n; p++) if (score[p] >= thr) S.cover[p]++; });
+  S.coverN = ids.length;
+}
+
+function setProblem(id) {
+  if (id === "combined") { S.problem = "combined"; S.weights = problemWeights(problemById("all")); S.mode = "coverage"; }
+  else { S.problem = id; S.weights = problemWeights(problemById(id)); if (S.mode === "coverage") S.mode = "similarity"; }
+  syncModeButtons();
+  renderSetup();
+  renderWeights();
+  recompute();
+}
+
+function renderSetup() {
+  const bodies = [...new Set(S.targets.map((t) => t.body))];
+  $("#bodies").innerHTML = bodies.map((b) => `<button role="radio" data-body="${b}" aria-checked="${b === S.body}">${esc(BODY[b] || b)}</button>`).join("");
+  const mine = S.targets.filter((t) => t.body === S.body), tg = [...new Set(mine.map((t) => t.group || "Targets"))];
+  $("#target").innerHTML = tg.map((g) => `<optgroup label="${esc(g)}">${mine.filter((t) => (t.group || "Targets") === g)
+    .map((t) => `<option value="${t.id}"${t.id === S.target.id ? " selected" : ""}>${esc(t.name)}</option>`).join("")}</optgroup>`).join("");
+  $("#target-note").textContent = S.target.mission || "";
+  // the dust-storm scenario exists only where some criterion is tied to a scenario and applies to this body
+  const hasScenario = S.criteria.some((c) => c.scenario && (!c.bodies || c.bodies.includes(S.body)));
+  $("#scenario-row").hidden = !hasScenario;
+  $$("#scenarios button").forEach((b) => b.setAttribute("aria-checked", String(b.dataset.scenario === S.scenario)));
+  $("#problems").innerHTML = PROBLEMS.map((pr) => {
+    const pending = problemPending(pr), ok = problemOk(pr);
+    const why = pending ? "Data for this problem is not loaded yet" : (pr.why || "The target has no data for these criteria");
+    return `<button class="pchip${pending ? " is-pending" : ""}" data-problem="${pr.id}" aria-pressed="${S.problem === pr.id}"${ok ? "" : ` disabled title="${esc(why)}"`}>${esc(pr.name)}${pending ? "<small>soon</small>" : ""}</button>`;
+  }).join("") + `<button class="pchip pchip-all" data-problem="combined" aria-pressed="${S.problem === "combined"}"${S.coverN > 1 ? "" : " disabled"}>All combined</button>`;
+  const pr = problemById(S.problem);
+  $("#problem-note").textContent = S.problem === "combined"
+    ? `The map shows how many of the ${S.coverN} test problems each place is in the top ${COVER_SHARE * 100}% of land for.`
+    : S.problem === "custom" ? "Custom weights, set in the Weights tab."
+    : pr.id === "all" ? `Uses all ${activeCriteria().length} criteria this target defines.`
+    : `Uses: ${S.criteria.filter((c) => pr.crit[c.id] && applicable(c)).map((c) => c.name.toLowerCase()).join(", ")}.`;
+}
+
+function setScenario(sc) {
+  if (sc === S.scenario) return;
+  S.scenario = sc;
+  selectTarget(S.target.id);
+}
+
+function syncModeButtons() {
+  $$("#view-modes button").forEach((b) => b.setAttribute("aria-checked", String(b.dataset.mode === S.mode)));
+  $("#criterion-field").hidden = S.mode !== "criterion";
+  $("#top-field").hidden = S.mode !== "top";
+}
+
+// ---------- pages ----------
+function setView(view) {
+  S.view = view;
+  $$(".mainnav button").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.view === view)));
+  $("#view-explore").hidden = view !== "explore";
+  $("#view-compare").hidden = view !== "compare";
+  $("#view-docs").hidden = view !== "docs";
+  $("#toolbar").hidden = view !== "explore";
+  if (view === "explore") S.map.invalidateSize();
+  if (view === "compare") renderCompare();
+  if (view === "docs" && window.renderDocs) window.renderDocs();
+}
+
+// Sites (top candidates for the current problem, plus the known analog sites) against every test problem.
+function renderCompare() {
+  const ids = coverIds(), all = S.pr.all;
+  const rows = visibleClusters().slice(0, 10).map((c) => ({ name: `Candidate site ${c.rank}`, sub: fmtCoord(c.lat, c.lon), p: c.best }));
+  S.known.forEach((k) => rows.push({
+    name: k.name, sub: `Known ${k.kind === "cave" ? "cave analog" : "analog site"} · ${k.for}`, p: posAt({ lat: k.lat, lng: k.lon }),
+  }));
+  rows.forEach((r) => {
+    r.cover = r.p >= 0 ? ids.filter((id) => S.pr[id].score[r.p] >= S.pr[id].thr).length : -1;
+    r.full = r.p >= 0 ? all.score[r.p] : -1;
+  });
+  rows.sort((a, b) => b.cover - a.cover || b.full - a.full);
+  const cell = (r, id) => {
+    if (r.p < 0) return '<td><span class="mx-cell is-na">—</span></td>';
+    const s = S.pr[id].score[r.p], top = id !== "all" && s >= S.pr[id].thr;
+    return `<td><span class="mx-cell${top ? " is-top" : ""}" style="background:${rgbCss(rampAt(s))};color:${s >= 0.62 ? "#0d1014" : "#eef1f4"}">${Math.round(s * 100)}</span></td>`;
+  };
+  const cur = S.problem === "combined" || S.problem === "custom" ? "the full match" : problemById(S.problem).name.toLowerCase();
+  $("#compare-lead").textContent = `Target: ${S.target.name}. Rows are the ten best candidate sites for ${cur} and the known analog sites. `
+    + "A high number means the place resembles the target on that test problem.";
+  $("#matrix").innerHTML = `<thead><tr><th>Site</th>${ids.map((id) => { const pr = problemById(id); return `<th title="${esc(pr.name)}">${esc(pr.short)}<small>${esc(pr.hint)}</small></th>`; }).join("")}
+    <th>Full match<small>all criteria</small></th><th>Covers<small>top ${COVER_SHARE * 100}% of land</small></th></tr></thead><tbody>${rows.map((r) => `
+    <tr data-p="${r.p}" tabindex="0"><td><b>${esc(r.name)}</b><small>${esc(r.p < 0 ? "outside the land grid" : r.sub)}</small></td>
+    ${ids.map((id) => cell(r, id)).join("")}${cell(r, "all")}<td class="mx-count">${r.cover < 0 ? "—" : `${r.cover} / ${ids.length}`}</td></tr>`).join("")}</tbody>`;
+  $$("#matrix tbody tr").forEach((tr) => {
+    const go = () => { const p = +tr.dataset.p; if (p < 0) return; setView("explore"); flyToCell(p, 4.5); showDetail(p); };
+    tr.addEventListener("click", go);
+    tr.addEventListener("keydown", (e) => { if (e.key === "Enter") go(); });
+  });
 }
 
 function topThreshold(score, share) {
@@ -190,12 +354,13 @@ function recompute() {
   renderSites();
   renderPins();
   if (S.selected !== undefined) showDetail(S.selected);
+  if (S.view === "compare") renderCompare();
 }
 
 function computeRobustness() {
   const n = S.grid.cells.length, hits = new Uint16Array(n), tmp = new Float32Array(n);
   for (let r = 0; r < ROBUST_RUNS; r++) {
-    const w = {}; S.criteria.forEach((c) => { w[c.id] = Math.random() * 2; });
+    const w = {}; S.criteria.forEach((c) => { w[c.id] = applicable(c) ? Math.random() * 2 : 0; });
     scoreAll(w, tmp);
     const thr = topThreshold(tmp, SITE_SHARE);
     for (let p = 0; p < n; p++) if (tmp[p] >= thr) hits[p]++;
@@ -244,6 +409,16 @@ function viewSpec() {
       classes: [1, 0.8, 0.6, 0.4, 0.2, 0].map((t) => ({ color: rampAt(t), label: "", range: t === 0 ? "0%" : `${pct(t - 0.2)}–${pct(t)}` })),
     };
   }
+  if (S.mode === "coverage") {
+    const N = S.coverN || 1;
+    return {
+      title: "Test problems covered",
+      note: `In the top ${COVER_SHARE * 100}% of land for each problem`,
+      value: (p) => (S.cover[p] ? S.cover[p] / N : null),
+      alpha: () => 240,
+      classes: Array.from({ length: N }, (_, i) => N - i).map((k) => ({ color: rampAt(k / N), label: k === N ? "All" : "", range: `${k} of ${N}` })),
+    };
+  }
   // robustness
   return {
     title: "Robustness to weights",
@@ -288,9 +463,11 @@ function initMap() {
   S.map.on("mousemove", (e) => showTooltip(e));
   S.map.on("mouseout", () => { $("#tooltip").hidden = true; });
 
-  S.knownLayer = L.layerGroup(S.known.map((k) => L.circleMarker([k.lat, k.lon], {
-    radius: 5, color: "#0d1014", weight: 2, fillColor: "#ffffff", fillOpacity: 1,
-  }).bindTooltip(`<b>${esc(k.name)}</b><br>Known analog site · ${esc(k.for)}`))).addTo(S.map);
+  // white dots = known surface analog sites, white diamonds = known cave / lava-tube analogs
+  S.knownLayer = L.layerGroup(S.known.map((k) => (k.kind === "cave"
+    ? L.marker([k.lat, k.lon], { icon: L.divIcon({ className: "", html: '<div class="cave-pin"></div>', iconSize: [12, 12], iconAnchor: [6, 6] }) })
+    : L.circleMarker([k.lat, k.lon], { radius: 5, color: "#0d1014", weight: 2, fillColor: "#ffffff", fillOpacity: 1 })
+  ).bindTooltip(`<b>${esc(k.name)}</b><br>${k.kind === "cave" ? "Known cave analog" : "Known analog site"} · ${esc(k.for)}`))).addTo(S.map);
   S.pinLayer = L.layerGroup().addTo(S.map);
 }
 
@@ -370,6 +547,8 @@ function showTooltip(e) {
     extra = ` · ${esc(c.name)} ${esc(fmtVal(c, S.grid.values[c.id][p]))}`;
   } else if (S.mode === "robustness" && S.robustness) {
     extra = ` · robust ${pct(S.robustness[p])}`;
+  } else if (S.mode === "coverage") {
+    extra = ` · covers ${S.cover[p]} of ${S.coverN}`;
   }
   tip.innerHTML = `${fmtCoord(lat, lon)} · <b>${pct(S.score[p])}</b> match${extra}`;
   tip.style.left = `${e.containerPoint.x}px`;
@@ -407,40 +586,59 @@ function renderSites() {
   });
 }
 
+const BODY = { moon: "Moon", mars: "Mars" };
+const STATUS = {
+  verified: '<span class="badge badge-ok">Verified</span>',
+  unverified: '<span class="badge badge-warn">Unverified</span>',
+};
+
 function renderTarget() {
-  const t = S.target;
-  const groups = [...new Set(S.criteria.map((c) => c.group))];
-  const crits = S.criteria.map((c) => {
+  const t = S.target, active = activeCriteria();
+  const groups = [...new Set(active.map((c) => c.group))];
+  const na = S.criteria.filter((c) => !applicable(c));
+  const crits = active.map((c) => {
     const info = targetInfo(c);
     const note = info.outside
       ? `<div class="note">${ICON.warn}<span>Outside Earth's range (${fmtVal(c, info.st.min)} to ${fmtVal(c, info.st.max)}); compared with the closest Earth extreme.</span></div>` : "";
     return `<div class="crit">
-      <div class="crit-row"><span class="crit-name"><span class="crit-group">${esc(c.group)}</span>${esc(c.name)}</span><span class="crit-value">${esc(fmtVal(c, info.t))}</span></div>
+      <div class="crit-row"><span class="crit-name"><span class="crit-group">${esc(c.group)}</span>${esc(c.name)}</span><span class="crit-value">${esc(targetText(c, info))}</span></div>
       <p>${esc(c.description)}</p>
       <p class="src">Target: ${esc(c.target_source[t.body] || "—")}<br>Earth: ${esc(c.earth_source)}</p>${note}</div>`;
   }).join("");
   const extra = Object.entries(t.extra || {}).map(([k, v]) => `<dt>${esc(k)}</dt><dd class="num">${esc(v)}</dd>`).join("");
   const limits = (t.limits || []).map((l) => `<tr><td>${esc(l.name)}</td><td>${esc(l.target)}</td><td>${esc(l.earth)}</td></tr>`).join("");
+  const naList = na.length ? `<p class="method">Not used for this target (no data or not meaningful): ${esc(na.map((c) => c.name).join(", "))}.</p>` : "";
+  const notes = (t.notes_subsurface || []).map((n) => `
+    <li class="claim">
+      <div class="claim-head">${STATUS[n.status] || ""}</div>
+      <p>${esc(n.claim)}</p>
+      <p class="src">${esc(n.caveat)}</p>
+      <p class="src">Source: ${n.url ? `<a href="${esc(n.url)}" target="_blank" rel="noopener">${esc(n.source)}</a>` : esc(n.source)}</p>
+    </li>`).join("");
+  const linkLabel = t.body === "mars" ? "Mars cave catalog" : t.kind === "subsurface" ? "LROC pit catalog" : "LROC image";
   $("#tab-target").innerHTML = `
     <div class="target-head">
       <h2>${esc(t.name)}</h2>
       <span class="chip">${esc(t.mission)}</span>
     </div>
     <dl class="kv card">
-      <dt>Body</dt><dd>${t.body === "moon" ? "Moon" : esc(t.body)}</dd>
+      <dt>Body</dt><dd>${esc(BODY[t.body] || t.body)}</dd>
+      <dt>Type</dt><dd>${t.kind === "subsurface" ? "Pit / lava-tube entrance" : "Surface landing site"}</dd>
       <dt>Coordinates</dt><dd class="num">${fmtCoord(t.lat, t.lon)}</dd>
       <dt>Analysis window</dt><dd class="num">${t.window_km} × ${t.window_km} km</dd>
       <dt>Coordinate source</dt><dd>${esc(t.coord_source)}</dd>
     </dl>
-    <p class="lede" style="margin-top:12px">${esc(t.notes || "")} ${t.info_url ? `<a href="${esc(t.info_url)}" target="_blank" rel="noopener">LROC image</a>` : ""}</p>
-    <h3 class="section-title">Target profile · ${S.criteria.length} criteria in ${groups.length} groups</h3>
+    <p class="lede" style="margin-top:12px">${esc(t.notes || "")} ${t.info_url ? `<a href="${esc(t.info_url)}" target="_blank" rel="noopener">${linkLabel}</a>` : ""}</p>
+    <h3 class="section-title">Target profile · ${active.length} criteria in ${groups.length} groups</h3>
     ${crits}
+    ${naList}
+    ${notes ? `<h3 class="section-title">Subsurface refuges · what is established</h3><ul class="claims">${notes}</ul>` : ""}
     <h3 class="section-title">Supporting measurements</h3>
     <dl class="kv card">${extra}</dl>
     <h3 class="section-title">What Earth cannot reproduce</h3>
     <table class="limits"><thead><tr><th>Factor</th><th>${esc(t.name)}</th><th>Earth</th></tr></thead><tbody>${limits}</tbody></table>
     <h3 class="section-title">Method</h3>
-    <p class="method">Earth's land is divided into 0.5° cells (about 55 km). Every cell gets the same ${S.criteria.length} criteria as the target,
+    <p class="method">Earth's land is divided into 0.5° cells (about 55 km). Every cell gets the same ${active.length} criteria as the target,
       computed with the same formulas. Each criterion is scored by blending the cell's percentile rank on Earth with the actual
       difference in value. When the target lies beyond anything on Earth (for example −154 °C), it is compared with the closest
       Earth extreme. The total is the weighted mean; missing data lowers it slightly. Candidate sites are connected groups of
@@ -448,10 +646,11 @@ function renderTarget() {
 }
 
 function renderWeights() {
-  const groups = [...new Set(S.criteria.map((c) => c.group))];
+  const active = activeCriteria();
+  const groups = [...new Set(active.map((c) => c.group))];
   $("#weights").innerHTML = groups.map((g) => `
     <div class="weight-group"><h3>${esc(g)}</h3>
-    ${S.criteria.filter((c) => c.group === g).map((c) => `
+    ${active.filter((c) => c.group === g).map((c) => `
       <div class="weight">
         <div class="weight-top"><label for="w-${c.id}">${esc(c.name)}</label><output id="wv-${c.id}">${fmt(S.weights[c.id], 1)}</output></div>
         <input type="range" id="w-${c.id}" min="0" max="2" step="0.1" value="${S.weights[c.id]}" data-id="${c.id}">
@@ -461,6 +660,7 @@ function renderWeights() {
   $$("#weights input").forEach((el) => el.addEventListener("input", () => {
     S.weights[el.dataset.id] = +el.value;
     $(`#wv-${el.dataset.id}`).textContent = fmt(+el.value, 1);
+    if (S.problem !== "custom") { S.problem = "custom"; if (S.mode === "coverage") { S.mode = "similarity"; syncModeButtons(); } renderSetup(); }
     clearTimeout(timer); timer = setTimeout(recompute, 150);
   }));
 }
@@ -472,6 +672,7 @@ function showDetail(p) {
   const like = [], unlike = [];
   let missing = 0;
   const rows = S.criteria.map((c, k) => {
+    if (!applicable(c)) return "";
     const x = S.grid.values[c.id][p], s = S.sub[p * K + k], info = targetInfo(c);
     if (Number.isNaN(s)) missing++;
     else if (S.weights[c.id] > 0) { if (s >= 0.7) like.push(c.name); else if (s < 0.35) unlike.push(c.name); }
@@ -479,7 +680,7 @@ function showDetail(p) {
     const bar = Number.isNaN(s) ? `<span style="color:var(--ink-3)">no data</span>` :
       `${pct(s)}<div class="meter"><i style="width:${s * 100}%;background:${scoreInk(s)}"></i></div>`;
     return `<tr><td>${esc(c.name)}${S.weights[c.id] === 0 ? ' <span style="color:var(--ink-3)">(weight 0)</span>' : ""}</td>
-      <td class="num">${esc(fmtVal(c, x))}</td><td class="num">${esc(fmtVal(c, info.t))}${clampNote}</td><td class="num">${bar}</td></tr>`;
+      <td class="num">${esc(fmtVal(c, x))}</td><td class="num">${esc(targetText(c, info))}${clampNote}</td><td class="num">${bar}</td></tr>`;
   }).join("");
   const wv = `https://worldview.earthdata.nasa.gov/?v=${lon - 2},${lat - 1.5},${lon + 2},${lat + 1.5}`;
   const osm = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=8/${lat}/${lon}`;
@@ -498,6 +699,11 @@ function showDetail(p) {
       <div class="verdict-row">${ICON.check}<span><span class="lbl">Matches on:</span> ${like.length ? esc(like.join(", ")) : "—"}</span></div>
       <div class="verdict-row">${ICON.cross}<span><span class="lbl">Differs on:</span> ${unlike.length ? esc(unlike.join(", ")) : "—"}</span></div>
     </div>
+    <h3 class="section-title">By test problem</h3>
+    <div class="pbars">${coverIds().map((id) => { const r = S.pr[id], s = r.score[p]; return `
+      <div class="pbar"><span>${esc(problemById(id).name)}</span><span class="meter"><i style="width:${s * 100}%;background:${scoreInk(s)}"></i></span>
+      <span class="num">${pct(s)}</span>${s >= r.thr ? '<span class="badge badge-ok">top 5%</span>' : "<span></span>"}</div>`; }).join("")}</div>
+    <h3 class="section-title">By criterion</h3>
     <table class="cmp"><thead><tr><th>Criterion</th><th>Here</th><th>${esc(t.name)}</th><th>Score</th></tr></thead><tbody>${rows}</tbody></table>
     <h3 class="section-title">What Earth cannot reproduce</h3>
     <table class="limits"><tbody>${(t.limits || []).map((l) => `<tr><td>${esc(l.name)}</td><td>${esc(l.target)}</td><td>${esc(l.earth)}</td></tr>`).join("")}</tbody></table>
@@ -520,9 +726,8 @@ function closeDetail() {
 // ---------- controls ----------
 function setMode(mode) {
   S.mode = mode;
-  $$("#view-modes button").forEach((b) => b.setAttribute("aria-checked", String(b.dataset.mode === mode)));
-  $("#criterion-field").hidden = mode !== "criterion";
-  $("#top-field").hidden = mode !== "top";
+  if (S.problem === "combined") { S.problem = "all"; renderSetup(); }
+  syncModeButtons();
   if (mode === "robustness" && !S.robustness) {
     $("#loading").hidden = false;
     $("#loading span").textContent = `Re-scoring the planet with ${ROBUST_RUNS} random weightings…`;
@@ -534,9 +739,24 @@ function setMode(mode) {
 
 function selectTarget(id) {
   S.target = S.targets.find((t) => t.id === id);
+  S.body = S.target.body;
+  if (!S.criteria.some((c) => c.scenario && (!c.bodies || c.bodies.includes(S.body)))) S.scenario = "normal";
+  const active = activeCriteria();
+  if (!active.some((c) => c.id === S.criterion)) S.criterion = active[0].id;
+  $("#criterion").innerHTML = active.map((c) => `<option value="${c.id}">${esc(c.group)} · ${esc(c.name)}</option>`).join("");
+  $("#criterion").value = S.criterion;
   computeSub();
+  computeProblems();
+  // keep the chosen test problem when the new target supports it, otherwise fall back to the full match
+  const keep = S.problem === "combined" ? S.coverN > 1 : S.problem !== "custom" && problemOk(problemById(S.problem));
+  if (!keep) { S.problem = "all"; if (S.mode === "coverage") S.mode = "similarity"; }
+  S.weights = problemWeights(problemById(S.problem === "combined" ? "all" : S.problem));
+  syncModeButtons();
+  renderSetup();
   renderTarget();
+  renderWeights();
   recompute();
+  if (S.view === "docs" && window.renderDocs) window.renderDocs();
 }
 
 async function load() {
@@ -544,6 +764,14 @@ async function load() {
   const [grid, criteria, targets, known] = await Promise.all([
     get("data/earth_grid.json"), get("data/criteria.json"), get("data/targets.json"), get("data/known_analogs.json"),
   ]);
+  // one shared set of group names, whatever the pipeline module called them
+  const GROUP = {
+    t_mean: "Temperature", t_max: "Temperature", t_swing: "Temperature", low_sun: "Light and shadow",
+    precip: "Water and ice", ice: "Water and ice", pressure: "Atmosphere",
+  };
+  const ORDER = ["Terrain", "Light and shadow", "Temperature", "Atmosphere", "Water and ice", "Surface and minerals", "Life", "Subsurface"];
+  criteria.forEach((c) => { c.group = GROUP[c.id] || c.group; });
+  criteria.sort((a, b) => (ORDER.indexOf(a.group) + 99) % 99 - (ORDER.indexOf(b.group) + 99) % 99);
   Object.assign(S, { grid, criteria, targets, known });
   S.posOf = new Int32Array(grid.nlat * grid.nlon).fill(-1);
   grid.cells.forEach((c, p) => { S.posOf[c] = p; });
@@ -562,9 +790,14 @@ async function load() {
     return;
   }
   initMap();
-  $("#target").innerHTML = S.targets.map((t) => `<option value="${t.id}">${esc(t.name)}</option>`).join("");
   $("#target").onchange = (e) => selectTarget(e.target.value);
-  $("#criterion").innerHTML = S.criteria.map((c) => `<option value="${c.id}">${esc(c.group)} · ${esc(c.name)}</option>`).join("");
+  $("#bodies").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-body]");
+    if (b && b.dataset.body !== S.body) selectTarget(S.targets.find((t) => t.body === b.dataset.body).id);
+  });
+  $("#problems").addEventListener("click", (e) => { const b = e.target.closest("[data-problem]"); if (b && !b.disabled) setProblem(b.dataset.problem); });
+  $("#scenarios").addEventListener("click", (e) => { const b = e.target.closest("[data-scenario]"); if (b) setScenario(b.dataset.scenario); });
+  $$(".mainnav button").forEach((b) => b.addEventListener("click", () => setView(b.dataset.view)));
   $("#criterion").onchange = (e) => { S.criterion = e.target.value; renderOverlay(); };
   $("#top-share").onchange = (e) => { S.topShare = +e.target.value; renderOverlay(); };
   $("#basemap").onchange = (e) => setBasemap(e.target.value);
@@ -574,13 +807,13 @@ async function load() {
     $$(".tabs button").forEach((x) => x.setAttribute("aria-selected", String(x === b)));
     $$(".tab").forEach((t) => { t.hidden = t.id !== b.dataset.tab; });
   }));
-  $("#reset-weights").onclick = () => { S.criteria.forEach((c) => { S.weights[c.id] = c.weight; }); renderWeights(); recompute(); };
+  $("#reset-weights").onclick = () => setProblem("all");
   $("#only-new").onchange = () => { renderSites(); renderPins(); renderBubbles(); };
   $("#show-ranks").onchange = renderPins;
   $("#show-known").onchange = (e) => (e.target.checked ? S.knownLayer.addTo(S.map) : S.map.removeLayer(S.knownLayer));
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("#detail").hidden) closeDetail(); });
   if (window.matchMedia("(max-width: 560px)").matches) $("#legend").open = false;
-  renderWeights();
+  S.target = S.targets[0];
   selectTarget(S.targets[0].id);
   $("#loading").hidden = true;
 })();

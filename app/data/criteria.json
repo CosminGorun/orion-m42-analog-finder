@@ -9,7 +9,8 @@
   "description": "Average terrain slope across the ~50 km analysis window, computed on a ~3.7 km grid.",
   "earth_source": "NOAA ETOPO1 global relief, sampled at 2′ (~3.7 km)",
   "target_source": {
-   "moon": "NASA LRO LOLA LDEM_75S_240M, averaged to ~3.6 km"
+   "moon": "NASA LRO LOLA (LDEM_75S_240M at the pole, LDEM_16 elsewhere), at ~3.6–3.8 km",
+   "mars": "NASA MGS MOLA MEGDR 16 ppd (~3.7 km)"
   },
   "why": "Slopes drive landing safety and rover mobility."
  },
@@ -23,7 +24,8 @@
   "description": "Slope value that 90% of the window stays below: how steep the hardest terrain gets.",
   "earth_source": "NOAA ETOPO1, 2′",
   "target_source": {
-   "moon": "NASA LRO LOLA, ~3.6 km"
+   "moon": "NASA LRO LOLA, ~3.6–3.8 km",
+   "mars": "NASA MGS MOLA MEGDR 16 ppd (~3.7 km)"
   },
   "why": "Steep ground limits traverses and creates long shadows."
  },
@@ -37,7 +39,8 @@
   "description": "Elevation range between the 5th and 95th percentile within the ~50 km window.",
   "earth_source": "NOAA ETOPO1, 2′",
   "target_source": {
-   "moon": "NASA LRO LOLA, ~3.6 km"
+   "moon": "NASA LRO LOLA, ~3.6–3.8 km",
+   "mars": "NASA MGS MOLA MEGDR 16 ppd (~3.7 km)"
   },
   "why": "Massifs such as Malapert rise thousands of metres above their surroundings."
  },
@@ -51,7 +54,8 @@
   "description": "Standard deviation of elevation after removing the window's best-fit plane (detrended).",
   "earth_source": "NOAA ETOPO1, 2′",
   "target_source": {
-   "moon": "NASA LRO LOLA, ~3.6 km"
+   "moon": "NASA LRO LOLA, ~3.6–3.8 km",
+   "mars": "NASA MGS MOLA MEGDR 16 ppd (~3.7 km)"
   },
   "why": "Separates irregular terrain (craters, ridges) from a uniform tilt."
  },
@@ -84,6 +88,49 @@
   "why": "How warm the warmest part of the year gets."
  },
  {
+  "id": "t_swing",
+  "group": "Thermal",
+  "name": "Day–night temperature swing",
+  "unit": "°C",
+  "decimals": 0,
+  "weight": 1.0,
+  "description": "Difference between daytime and night-time surface temperature. Earth: MODIS day minus night LST, 2020–2024 mean. Moon: Diviner maximum minus minimum over the lunar day.",
+  "earth_source": "NASA MODIS Terra MOD11C3 v061, day and night LST, 2020–2024",
+  "target_source": {
+   "moon": "NASA LRO Diviner Global Cumulative Product (tbol over 96 local-time bins)"
+  },
+  "why": "Surface habitats and equipment must survive the thermal cycle; caves damp it out."
+ },
+ {
+  "id": "cave_temp",
+  "group": "Subsurface",
+  "name": "Cave interior temperature",
+  "unit": "°C",
+  "decimals": 1,
+  "weight": 1.0,
+  "description": "Earth: a cave settles near the mean annual surface temperature above it (MODIS proxy). Moon: modelled temperature of the shadowed part of the pit.",
+  "earth_source": "Proxy: NASA MODIS MOD11C3 mean annual LST, 2020–2024",
+  "target_source": {
+   "moon": "Horvath, Paige & Hayne (2022), GRL, doi:10.1029/2022GL099710, modelled from Diviner"
+  },
+  "why": "A stable interior temperature is what makes a pit or lava tube attractive as a shelter."
+ },
+ {
+  "id": "basalt_dist",
+  "group": "Subsurface",
+  "name": "Distance to young basaltic lava field",
+  "unit": "km",
+  "decimals": 0,
+  "weight": 1.0,
+  "description": "Distance to the nearest Holocene basaltic shield, fissure vent, cone or volcanic field — where lava tubes form on Earth. Lunar and Martian pits sit on basaltic lava plains or shields (0 km).",
+  "earth_source": "Smithsonian Global Volcanism Program, Holocene volcanoes (basaltic, effusive types)",
+  "target_source": {
+   "moon": "Host unit from the LROC lunar pit catalog (mare basalt)",
+   "mars": "Host unit from the Mars Global Cave Candidate Catalog (Arsia Mons basaltic shield)"
+  },
+  "why": "Lava tubes form only in fluid basaltic lava flows."
+ },
+ {
   "id": "precip",
   "group": "Environment",
   "name": "Annual precipitation",
@@ -93,7 +140,8 @@
   "description": "Total annual precipitation, 2020–2024 mean. Moon: 0.",
   "earth_source": "NASA GPM IMERG Final 3IMERGM v07, monthly, 2020–2024",
   "target_source": {
-   "moon": "Physical value: no atmosphere, 0 mm"
+   "moon": "Physical value: no atmosphere, 0 mm",
+   "mars": "Physical value: no rainfall at the surface, 0 mm"
   },
   "why": "Extreme aridity is the baseline condition for a lunar analog."
  },
@@ -107,7 +155,8 @@
   "description": "Share of daylight hours in a year when the Sun is less than 10° above the horizon.",
   "earth_source": "Astronomical calculation by latitude (axial tilt 23.44°)",
   "target_source": {
-   "moon": "Astronomical calculation by latitude (lunar axial tilt 1.54°)"
+   "moon": "Astronomical calculation by latitude (lunar axial tilt 1.54°)",
+   "mars": "Astronomical calculation by latitude (Mars axial tilt 25.19°)"
   },
   "why": "At the lunar south pole the Sun always grazes the horizon: long shadows challenge navigation and cameras."
  },
@@ -121,7 +170,8 @@
   "description": "Earth: estimated from mean elevation (standard atmosphere). Moon: effectively vacuum (0 hPa).",
   "earth_source": "Derived from NOAA ETOPO1 elevation",
   "target_source": {
-   "moon": "Physical value: exosphere, ~0 hPa"
+   "moon": "Physical value: exosphere, ~0 hPa",
+   "mars": "Estimated from MOLA elevation (6.1 hPa at datum, 11.1 km scale height)"
   },
   "why": "High elevation gets closest to low-pressure conditions, though nowhere on Earth approaches vacuum."
  },
@@ -139,5 +189,228 @@
    "moon": "NASA LRO Diviner Polar Resource Product (ice_depth)"
   },
   "why": "Ice is the key resource for a permanent base: water, oxygen and propellant."
+ },
+ {
+  "id": "polar_day",
+  "group": "Light and shadow",
+  "name": "Polar day",
+  "unit": "%",
+  "decimals": 0,
+  "weight": 0.5,
+  "description": "Share of the year when the Sun never sets.",
+  "earth_source": "Astronomical calculation by latitude (axial tilt: Earth 23.44°, Moon 1.54°, Mars 25.19°)",
+  "target_source": {
+   "moon": "Astronomical calculation by latitude (axial tilt: Earth 23.44°, Moon 1.54°, Mars 25.19°)",
+   "mars": "Astronomical calculation by latitude (axial tilt: Earth 23.44°, Moon 1.54°, Mars 25.19°)"
+  },
+  "why": "Weeks of continuous low sunlight are what solar power and crew sleep schedules face near the poles.",
+  "formula": "days with |φ| + δ·sign(φ) − 90° > −0.83°, as a share of the year",
+  "limit": "Ignores local terrain. On the Moon the cycle runs over about 346 days, not a calendar year.",
+  "layer": "astro"
+ },
+ {
+  "id": "polar_night",
+  "group": "Light and shadow",
+  "name": "Polar night",
+  "unit": "%",
+  "decimals": 0,
+  "weight": 0.5,
+  "description": "Share of the year when the Sun never rises.",
+  "earth_source": "Astronomical calculation by latitude (axial tilt: Earth 23.44°, Moon 1.54°, Mars 25.19°)",
+  "target_source": {
+   "moon": "Astronomical calculation by latitude (axial tilt: Earth 23.44°, Moon 1.54°, Mars 25.19°)",
+   "mars": "Astronomical calculation by latitude (axial tilt: Earth 23.44°, Moon 1.54°, Mars 25.19°)"
+  },
+  "why": "How long hardware has to survive without direct sunlight.",
+  "formula": "days with 90° − |φ| + δ·sign(φ) < −0.83°, as a share of the year",
+  "limit": "Ignores local terrain: a ridge can stay lit, a crater floor can stay dark.",
+  "layer": "astro"
+ },
+ {
+  "id": "dep_frac",
+  "group": "Terrain",
+  "name": "Closed depressions, area",
+  "unit": "%",
+  "decimals": 1,
+  "weight": 1.0,
+  "description": "Share of the ~50 km window that lies in closed hollows deeper than 10 m.",
+  "earth_source": "Derived from NOAA ETOPO1, 2′ (~3.7 km)",
+  "target_source": {
+   "moon": "Derived from NASA LRO LOLA, ~3.6–3.8 km",
+   "mars": "Derived from NASA MGS MOLA MEGDR 16 ppd (~3.7 km)"
+  },
+  "why": "Craters are the main landing hazard and the main obstacle for rovers.",
+  "formula": "depth = filled relief − relief;  area = share of pixels with depth > 10 m",
+  "limit": "Measures shape, not origin: calderas, sinkholes and dry basins count too. Only hollows wider than about 10 km are resolved.",
+  "layer": "depressions"
+ },
+ {
+  "id": "dep_depth",
+  "group": "Terrain",
+  "name": "Closed depressions, depth",
+  "unit": "m",
+  "decimals": 0,
+  "weight": 0.5,
+  "description": "Mean depth of the closed hollows in the window (0 where there are none).",
+  "earth_source": "Derived from NOAA ETOPO1, 2′ (~3.7 km)",
+  "target_source": {
+   "moon": "Derived from NASA LRO LOLA, ~3.6–3.8 km",
+   "mars": "Derived from NASA MGS MOLA MEGDR 16 ppd (~3.7 km)"
+  },
+  "why": "Deep hollows mean steep inner walls, long shadows and cold floors.",
+  "formula": "mean of (filled relief − relief) over pixels deeper than 10 m",
+  "limit": "A hollow cut by the window edge counts as open, so very large basins are underestimated.",
+  "layer": "depressions"
+ },
+ {
+  "id": "dust",
+  "group": "Atmosphere",
+  "name": "Dust in the air, normal conditions",
+  "unit": "τ",
+  "decimals": 2,
+  "weight": 1.0,
+  "mode": "match",
+  "bodies": [
+   "mars"
+  ],
+  "scenario": "normal",
+  "description": "Mean dust optical depth at 550 nm, 2020–2024: how much sunlight the airborne dust blocks.",
+  "earth_source": "NASA MERRA-2 M2TMNXAER (monthly aerosol diagnostics), DUEXTTAU, mean 2020–2024",
+  "target_source": {
+   "moon": "Not applicable: no atmosphere",
+   "mars": "Mars Climate Database / orbiter dust opacity at the target (see target_values.json)"
+  },
+  "why": "Dust in the air cuts solar power, coats optics and radiators, and sets how much abrasion hardware sees.",
+  "formula": "mean of 60 monthly DUEXTTAU values (dust extinction optical thickness, 550 nm)",
+  "limit": "Mars typically has τ ≈ 0.3–1 from dust alone in clear seasons. MERRA-2 is a reanalysis: a global model corrected with observations, not a direct measurement, on a ~50 km grid that smooths local extremes.",
+  "licence": "NASA MERRA-2 (GMAO, distributed by GES DISC): US government data, public domain, no restrictions",
+  "layer": "merra"
+ },
+ {
+  "id": "dust_storm",
+  "group": "Atmosphere",
+  "name": "Dust storms",
+  "unit": "",
+  "decimals": 2,
+  "weight": 1.0,
+  "mode": "higher",
+  "lo": 0,
+  "hi": 1,
+  "bodies": [
+   "mars"
+  ],
+  "scenario": "storm",
+  "description": "0–1 index of how often, how long and how densely thick dust fills the air, from daily dust optical depth over a sample of 114 days, 2024-01-01 to 2024-04-23 (MERRA-2 hourly fields sampled every 6 hours). A sample, not a full year: days per year are scaled as (days above 0.5 / 114) × 365.",
+  "earth_source": "NASA MERRA-2 M2T1NXAER (hourly aerosol diagnostics), DUEXTTAU at 00:30/06:30/12:30/18:30 UTC, daily means, 114 days, 2024-01-01 to 2024-04-23",
+  "target_source": {
+   "moon": "Not applicable: no atmosphere",
+   "mars": "Higher is better: the most storm-prone Earth sites are the best stand-ins"
+  },
+  "why": "Long, dense dust events are the closest Earth gets to testing solar power loss, dust ingress and seal wear under a Martian storm.",
+  "formula": "0.30·min(P95/2.0,1) + 0.30·min(days with τ>0.5 / 120,1) + 0.25·min(longest run of days with τ>0.5 / 15,1) + 0.15·min(mean/0.6,1), τ = daily mean dust optical depth",
+  "limit": "Earth dust storms reach optical depth 3–5 for hours to days; the 2018 Mars global storm reached 10.8 and lasted months. Built from a 114 days, 2024-01-01 to 2024-04-23 sample, not a full year: it misses the northern summer dust season (Sahel, Arabia, Taklamakan peak in spring-summer), so P95, longest run and scaled days per year are biased for those regions; 6-hourly sampling can miss short peaks. MERRA-2 is a reanalysis: a global model corrected with observations, not a direct measurement, on a ~50 km grid that smooths local extremes.",
+  "licence": "NASA MERRA-2 (GMAO, distributed by GES DISC): US government data, public domain, no restrictions",
+  "layer": "merra"
+ },
+ {
+  "id": "wind",
+  "group": "Atmosphere",
+  "name": "Wind, force-equivalent",
+  "unit": "m/s",
+  "decimals": 1,
+  "weight": 0.5,
+  "mode": "match",
+  "bodies": [
+   "mars"
+  ],
+  "description": "Near-surface wind speed on Earth, 2020–2024 mean of the monthly SPEEDMAX field (time-mean of the hourly maximum surface wind speed), compared with the Mars wind scaled to the same push.",
+  "earth_source": "NASA MERRA-2 M2TMNXFLX (monthly surface fluxes), SPEEDMAX, mean 2020–2024",
+  "target_source": {
+   "moon": "Not applicable: no atmosphere",
+   "mars": "Mars wind speed (target_values.json) × 0.12 = Earth wind with the same dynamic pressure"
+  },
+  "why": "Wind load on masts, panels and parachutes depends on dynamic pressure, so the Mars wind must be converted before it can be matched to an Earth site.",
+  "formula": "Earth: mean of monthly SPEEDMAX; Mars target: v_Mars · sqrt(ρ_Mars/ρ_Earth) ≈ 0.12 · v_Mars",
+  "limit": "A 100 km/h Mars wind pushes like about 11–13 km/h on Earth because the air is 60–80 times thinner; sand lifting and abrasion do not scale the same way. MERRA-2 is a reanalysis: a global model corrected with observations, not a direct measurement, on a ~50 km grid that smooths local extremes.",
+  "licence": "NASA MERRA-2 (GMAO, distributed by GES DISC): US government data, public domain, no restrictions",
+  "layer": "merra"
+ },
+ {
+  "id": "soil_moist",
+  "group": "Water and ice",
+  "name": "Soil moisture",
+  "unit": "m³/m³",
+  "decimals": 3,
+  "weight": 0.5,
+  "mode": "lower",
+  "lo": 0.02,
+  "hi": 0.1,
+  "bodies": [
+   "moon",
+   "mars"
+  ],
+  "description": "Mean volumetric water content of the surface soil layer (top ~5 cm), 2020–2024.",
+  "earth_source": "NASA MERRA-2 M2TMNXLND (monthly land surface diagnostics), SFMC, mean 2020–2024",
+  "target_source": {
+   "moon": "Effectively 0: no liquid water in the regolith",
+   "mars": "Effectively 0: no liquid water in the surface regolith"
+  },
+  "why": "Wet soil changes traction, dust behaviour and how instruments see the ground; dry sites behave most like regolith.",
+  "formula": "mean of 60 monthly SFMC values (m³ water per m³ soil, surface layer)",
+  "limit": "Model soil moisture over deserts is poorly constrained by observations and has a floor set by the land model; it ignores ice below the surface. MERRA-2 is a reanalysis: a global model corrected with observations, not a direct measurement, on a ~50 km grid that smooths local extremes.",
+  "licence": "NASA MERRA-2 (GMAO, distributed by GES DISC): US government data, public domain, no restrictions",
+  "layer": "merra"
+ },
+ {
+  "id": "ndvi",
+  "group": "Life",
+  "name": "Vegetation (NDVI)",
+  "unit": "",
+  "decimals": 2,
+  "weight": 1.0,
+  "mode": "lower",
+  "lo": 0.1,
+  "hi": 0.2,
+  "bodies": [
+   "moon",
+   "mars"
+  ],
+  "description": "How green the ground is seen from orbit at the greenest time of year. Plants absorb red light and reflect near-infrared strongly, so the normalised difference of the two is high over vegetation and near zero over bare rock and sand. The MODIS sensor is passive: it measures reflected sunlight and emits nothing. Below about 0.1 the ground is bare; 0.1-0.2 is sparse vegetation. Uses the monthly maps of January 2022 - August 2023 (20 months).",
+  "earth_source": "NASA MODIS MOD13C2 v061 (Terra, monthly 0.05° NDVI), January 2022 - August 2023 (20 months), sampled at 0.1°; per-pixel maximum, snow/ice and cloudy months removed",
+  "target_source": {
+   "moon": "No vegetation: set to 0",
+   "mars": "No vegetation: set to 0"
+  },
+  "why": "Vegetation scatters radar, adds organic matter that confuses instruments, and roots change how far wheels and feet sink, so a test site should be as bare as the target.",
+  "formula": "NDVI = (NIR − Red) / (NIR + Red); per pixel the maximum over the 20 monthly maps Jan 2022 - Aug 2023; block mean to 0.5°, NaN if under 30% of pixels are valid",
+  "limit": "Only 20 months (all of 2022, January-August 2023), fewer than three full years: a single year's growing season is covered once, so vegetation after an unusually dry 2022 or in late 2023 may be missed. Snow, ice and water also give low NDVI, so months flagged snow/ice or cloud and negative values are removed (permanent ice sheets therefore have no value). NDVI sees plants, not microbes; lichens and biological soil crusts can raise it slightly.",
+  "licence": "NASA LP DAAC, open data, no restrictions; citation requested",
+  "layer": "modis"
+ },
+ {
+  "id": "low_biomass",
+  "group": "Life",
+  "name": "Soil with little microbial life",
+  "unit": "",
+  "decimals": 2,
+  "weight": 1.0,
+  "mode": "higher",
+  "lo": 0.5,
+  "hi": 0.9,
+  "bodies": [
+   "moon",
+   "mars"
+  ],
+  "description": "Estimate from 0 to 1 of how close to lifeless the soil is, built from dryness, soil organic carbon, cold and the absence of plants. It is an estimate from climate and soil maps, not a measurement of microbes.",
+  "earth_source": "TerraClimate 1991-2020 climatology, ppt and pet (University of Idaho, CC0); ISRIC SoilGrids 2.0 soc 0-5 cm (CC BY 4.0); mean annual temperature (MERRA-2 t2m, or MODIS land-surface temperature); MODIS NDVI when available",
+  "target_source": {
+   "moon": "Not measured: every target is treated as sterile (no indigenous biology is known), so higher is always closer",
+   "mars": "Not measured: every target is treated as sterile (no indigenous biology is known), so higher is always closer"
+  },
+  "why": "Life-detection instruments and contamination-control procedures need a low biological background to test against.",
+  "formula": "LB = 0.45·W + 0.30·C + 0.15·T + 0.10·V; W = clip((log 0.2 − log AI)/(log 0.2 − log 0.002)), AI = annual P / PET; C = clip((log 20 − log SOC)/(log 20 − log 1)), SOC in g/kg at 0-5 cm; T = clip((5 − Tmean)/30); V = 1 where NDVI < 0.1. The weights are this project's own proposal, not a published method.",
+  "limit": "No natural surface on Earth is sterile: the poorest soil measured, in University Valley (Antarctica), still holds on the order of a thousand cells per gram. Global soil and aridity maps rest on very few field samples in hyperarid and polar regions. One 0.5° cell hides microbes under rocks, inside rocks and in fog oases. SoilGrids is poorly constrained in hyperarid deserts and likely overestimates their organic carbon (it gives about 10-15 g/kg around Yungay in the Atacama). No global soil map covers Antarctica, and TerraClimate PET is zero there, so the aridity index is undefined: Antarctic cells use only the terms that exist (in practice cold, plus plants when NDVI is available), with the weights renormalised, so they mostly score near 1 and cannot tell ice-free valleys from the ice sheet. Elsewhere cells without soil or aridity data are left empty. Aridity uses one TerraClimate sample per 0.5° cell, not a cell average. When no NDVI layer is available the plant term is dropped and the weights renormalised. Confirming a site needs field sampling. For extremophile studies the direction is reversed: you want the places where life does hold on.",
+  "licence": "TerraClimate: CC0 (public domain). SoilGrids 2.0: CC BY 4.0, © ISRIC - World Soil Information.",
+  "layer": "soil"
  }
 ]
