@@ -9,8 +9,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Fira+Sans:wght@400;500;600;700&display=swap">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
-  <link rel="stylesheet" href="style.css?v=5">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" integrity="sha512-h9FcoyWjHcOcmEVkxOfTLnmZFWIH0iZhZT1H2TbOq55xssQGEJHEaIm+PgoUaZbRvQTNTluNOEfb1ZRy6D3BOw==" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="style.css?v=8">
 </head>
 <body>
   <a class="skip" href="#map">Skip to map</a>
@@ -29,66 +29,34 @@
 
     <nav class="mainnav" role="tablist" aria-label="Pages">
       <button role="tab" data-view="explore" aria-selected="true">Explore</button>
-      <button role="tab" data-view="compare" aria-selected="false">Compare sites</button>
       <button role="tab" data-view="docs" aria-selected="false">Method and data</button>
     </nav>
 
-    <div class="toolbar" id="toolbar" role="toolbar" aria-label="Map controls">
-      <div class="field">
-        <span id="view-label">View</span>
-        <div class="segmented" id="view-modes" role="radiogroup" aria-labelledby="view-label">
-          <button role="radio" data-mode="similarity" aria-checked="true">Similarity</button>
-          <button role="radio" data-mode="top" aria-checked="false">Top sites</button>
-          <button role="radio" data-mode="criterion" aria-checked="false">By criterion</button>
-          <button role="radio" data-mode="robustness" aria-checked="false">Robustness</button>
-        </div>
-      </div>
-
-      <label class="field" id="criterion-field" hidden>
-        <span>Criterion</span>
-        <select id="criterion"></select>
-      </label>
-
-      <label class="field" id="top-field" hidden>
-        <span>Show</span>
-        <select id="top-share">
-          <option value="0.01">Top 1% of land</option>
-          <option value="0.05">Top 5% of land</option>
-          <option value="0.1">Top 10% of land</option>
-        </select>
-      </label>
-
-      <label class="field">
-        <span>Basemap</span>
-        <select id="basemap">
-          <option value="dark">Dark</option>
-          <option value="relief">Relief</option>
-          <option value="satellite">Satellite</option>
-        </select>
-      </label>
-    </div>
+    <div class="topbar-end" aria-hidden="true"></div>
   </header>
 
   <section class="setup" id="setup" aria-label="Destination and test problem">
-    <div class="setup-step">
+    <div class="setup-step setup-dest">
       <div class="setup-h"><span class="setup-n">1</span>Destination</div>
-      <div class="setup-row">
-        <div class="segmented" id="bodies" role="radiogroup" aria-label="Body"></div>
-        <select id="target" aria-label="Target site"></select>
+      <div class="dest-row">
+        <div class="bodyswitch" id="bodies" role="radiogroup" aria-label="Destination body"></div>
+        <button class="storm-btn" id="storm" type="button" aria-pressed="false" aria-label="Dust storm scenario" title="Dust storm scenario" hidden></button>
       </div>
-      <div class="setup-row" id="scenario-row" hidden>
-        <span class="setup-label">Scenario</span>
-        <div class="segmented" id="scenarios" role="radiogroup" aria-label="Scenario">
-          <button role="radio" data-scenario="normal" aria-checked="true">Normal conditions</button>
-          <button role="radio" data-scenario="storm" aria-checked="false">Dust storm</button>
-        </div>
-      </div>
+      <select id="target" aria-label="Target site"></select>
       <p class="setup-note" id="target-note"></p>
     </div>
-    <div class="setup-step">
-      <div class="setup-h"><span class="setup-n">2</span>What do you want to test?</div>
-      <div class="setup-row" id="problems"></div>
-      <p class="setup-note" id="problem-note"></p>
+    <div class="setup-step setup-tests">
+      <div class="setup-h tests-h">
+        <span class="setup-n">2</span><span class="tests-title">What do you want to test?</span>
+        <button class="tests-current" id="tests-current" type="button" title="Show all tests" hidden></button>
+        <button class="tests-toggle" id="tests-toggle" type="button" aria-expanded="true" aria-controls="tests-body" aria-label="Collapse test panel" title="Collapse">
+          <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M4 10l4-4 4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+      <div class="tests-body" id="tests-body">
+        <div class="pgroups" id="problems"></div>
+        <p class="setup-note" id="problem-note"></p>
+      </div>
     </div>
   </section>
 
@@ -141,6 +109,56 @@
         </label>
       </details>
 
+      <!-- map view control: moved into the Leaflet top-right corner (below the zoom buttons) by initMap() -->
+      <div class="viewctl" id="viewctl">
+        <button class="viewctl-btn" id="viewctl-btn" type="button" aria-expanded="false" aria-controls="viewctl-panel" aria-label="Map view and basemap" title="Map view and basemap">
+          <svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true">
+            <path d="M10 2.6 2.4 6.4 10 10.2l7.6-3.8z" fill="currentColor" fill-opacity="0.18" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+            <path d="M2.4 10 10 13.8l7.6-3.8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M2.4 13.6 10 17.4l7.6-3.8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <div class="viewctl-panel" id="viewctl-panel" role="dialog" aria-label="Map view and basemap" hidden>
+          <div class="field">
+            <span id="view-label">View</span>
+            <div class="segmented seg-grid" id="view-modes" role="radiogroup" aria-labelledby="view-label">
+              <button role="radio" data-mode="similarity" aria-checked="true">Similarity</button>
+              <button role="radio" data-mode="top" aria-checked="false">Top sites</button>
+              <button role="radio" data-mode="criterion" aria-checked="false">By criterion</button>
+              <button role="radio" data-mode="robustness" aria-checked="false">Robustness</button>
+            </div>
+          </div>
+
+          <label class="field" id="criterion-field" hidden>
+            <span>Criterion</span>
+            <select id="criterion"></select>
+          </label>
+
+          <label class="field" id="top-field" hidden>
+            <span>Show</span>
+            <select id="top-share">
+              <option value="0.01">Top 1% of land</option>
+              <option value="0.05">Top 5% of land</option>
+              <option value="0.1">Top 10% of land</option>
+            </select>
+          </label>
+
+          <div class="field">
+            <span id="basemap-label">Basemap</span>
+            <div class="segmented seg-fill" id="basemaps" role="radiogroup" aria-labelledby="basemap-label">
+              <button role="radio" data-basemap="dark" aria-checked="false">Dark</button>
+              <button role="radio" data-basemap="satellite" aria-checked="true">Satellite</button>
+              <button role="radio" data-basemap="terrain" aria-checked="false">Terrain</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <details class="minimap-card" id="minimap-card" open>
+        <summary class="minimap-head">Fast travel</summary>
+        <div id="minimap" class="minimap" aria-label="World overview. Click to move the map there."></div>
+      </details>
+
       <aside id="detail" class="detail" aria-label="Site details" hidden></aside>
       <div id="loading" class="loading" role="status">
         <div class="loading-bar"></div>
@@ -149,26 +167,30 @@
     </div>
   </main>
 
-  <section class="page" id="view-compare" aria-label="Compare sites" hidden>
-    <div class="page-in">
-      <h2>Which site is good at what</h2>
-      <p class="page-lead" id="compare-lead"></p>
-      <div class="mx-wrap"><table class="mx" id="matrix"></table></div>
-      <p class="page-foot">Scores are the match with the selected target, computed from the same data as the map. A ring marks cells in the top 5% of Earth's land for that problem. Click a row to open the site on the map.</p>
-    </div>
-  </section>
-
   <section class="page" id="view-docs" aria-label="Method and data" hidden>
     <div class="page-in">
-      <h2>Method and data</h2>
-      <p class="page-lead">Pick a group, then move the sliders. Each criterion is shown working on the real data: the grey bars are how Earth's land is distributed, the green curve is the match score against the selected target.</p>
-      <div class="d-tabs" id="d-tabs" role="tablist" aria-label="Criteria groups"></div>
-      <div id="d-body"></div>
+      <header class="m-hero">
+        <div class="m-kicker">Method and data</div>
+        <h2>How a place on Earth gets its score</h2>
+        <p class="page-lead" id="m-lead"></p>
+      </header>
+      <ol class="m-steps" id="m-steps"></ol>
+
+      <h3 class="m-sec">The criteria</h3>
+      <p class="m-sec-lead">Pick a criterion to see how Earth's land is spread on it and which values count as close to the target.</p>
+      <div class="m-explorer">
+        <nav class="m-list" id="m-list" aria-label="Criteria"></nav>
+        <article class="m-detail" id="m-detail" aria-live="polite"></article>
+      </div>
+
+      <h3 class="m-sec">Data sources</h3>
+      <div class="m-sources" id="m-sources"></div>
     </div>
   </section>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-  <script src="app.js?v=5"></script>
-  <script src="docs.js?v=5"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" integrity="sha512-puJW3E/qXDqYp9IfhAI54BJEaWIfloJ7JWs7OeD5i6ruC9JZL1gERT1wjtwXFlh7CjE7ZJ+/vcRZRkIYIb6p4g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="icons.js?v=8"></script>
+  <script src="app.js?v=8"></script>
+  <script src="docs.js?v=8"></script>
 </body>
 </html>

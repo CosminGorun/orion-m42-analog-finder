@@ -17,3 +17,10 @@ raw/
 .idea/
 .DS_Store
 Thumbs.db
+
+# Office lock files
+~$*
+
+# Not part of the project code: pitch material, team photos, demo video
+presentation/
+membri/

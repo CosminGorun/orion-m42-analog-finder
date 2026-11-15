@@ -166,17 +166,24 @@ function scoreAll(weights, out) {
 const COVER_SHARE = 0.05;   // a cell "covers" a problem when it is in the top 5% of land for it
 // "core" lists the criteria a problem cannot do without (default: all of them). A problem whose core criteria
 // are not in the data yet shows as "soon"; one whose core criteria do not apply to the target is switched off.
+// "group" places a problem in the setup bar; its icon is TEST_ICONS[id] (icons.js).
+const PROBLEM_GROUPS = [
+  { id: "overall", name: "Overall" },
+  { id: "terrain", name: "Terrain" },
+  { id: "env", name: "Environment" },
+  { id: "res", name: "Resources and life" },
+];
 const PROBLEMS = [
-  { id: "all", name: "Full match", hint: "every criterion the target defines" },
-  { id: "terrain", name: "Landing and terrain", short: "Terrain", hint: "slopes, relief, roughness", crit: { slope_mean: 1, slope_p90: 1, relief: 1, roughness: 1 } },
-  { id: "craters", name: "Craters", short: "Craters", hint: "closed hollows, steep walls", crit: { dep_frac: 1, dep_depth: 1, slope_p90: 0.5, relief: 0.5 }, core: ["dep_frac", "dep_depth"] },
-  { id: "dust", name: "Dust and wind", short: "Dust", hint: "airborne dust, storms, wind", crit: { dust: 1, dust_storm: 1, wind: 0.5 }, why: "No atmosphere at this target" },
-  { id: "cold", name: "Cold and thermal cycling", short: "Cold", hint: "ground temperature, day–night swing", crit: { t_mean: 1, t_max: 1, t_swing: 1 } },
-  { id: "light", name: "Light and shadow", short: "Light", hint: "low Sun, polar day and night", crit: { low_sun: 1, polar_day: 0.5, polar_night: 0.5 }, core: ["low_sun"] },
-  { id: "dry", name: "Dryness and thin air", short: "Dry air", hint: "rain, soil moisture, pressure", crit: { precip: 1, soil_moist: 1, pressure: 0.5 }, core: ["precip", "pressure"] },
-  { id: "ice", name: "Ice and drilling", short: "Ice", hint: "ground ice, cold ground", crit: { ice: 1, t_mean: 0.5 }, core: ["ice"], needs: (t) => t.values.ice === 1, why: "No ground ice at this target" },
-  { id: "caves", name: "Caves", short: "Caves", hint: "lava-tube terrain, cave temperature", crit: { cave_temp: 1, basalt_dist: 1 }, needs: (t) => t.kind === "subsurface", why: "This target is not a pit or cave" },
-  { id: "life", name: "Life-detection tests", short: "Lifeless soil", hint: "no plants, few microbes", crit: { ndvi: 1, low_biomass: 1 } },
+  { id: "all", group: "overall", name: "Full match", hint: "every criterion the target defines" },
+  { id: "terrain", group: "terrain", name: "Landing and terrain", short: "Terrain", hint: "slopes, relief, roughness", crit: { slope_mean: 1, slope_p90: 1, relief: 1, roughness: 1 } },
+  { id: "craters", group: "terrain", name: "Craters", short: "Craters", hint: "closed hollows, steep walls", crit: { dep_frac: 1, dep_depth: 1, slope_p90: 0.5, relief: 0.5 }, core: ["dep_frac", "dep_depth"] },
+  { id: "dust", group: "env", name: "Dust and wind", short: "Dust", hint: "airborne dust, storms, wind", crit: { dust: 1, dust_storm: 1, wind: 0.5 }, why: "No atmosphere at this target" },
+  { id: "cold", group: "env", name: "Cold and thermal cycling", short: "Cold", hint: "ground temperature, day–night swing", crit: { t_mean: 1, t_max: 1, t_swing: 1 } },
+  { id: "light", group: "env", name: "Light and shadow", short: "Light", hint: "low Sun, polar day and night", crit: { low_sun: 1, polar_day: 0.5, polar_night: 0.5 }, core: ["low_sun"] },
+  { id: "dry", group: "env", name: "Dryness and thin air", short: "Dry air", hint: "rain, soil moisture, pressure", crit: { precip: 1, soil_moist: 1, pressure: 0.5 }, core: ["precip", "pressure"] },
+  { id: "ice", group: "res", name: "Ice and drilling", short: "Ice", hint: "ground ice, cold ground", crit: { ice: 1, t_mean: 0.5 }, core: ["ice"], needs: (t) => t.values.ice === 1, why: "No ground ice at this target" },
+  { id: "caves", group: "terrain", name: "Caves", short: "Caves", hint: "lava-tube terrain, cave temperature", crit: { cave_temp: 1, basalt_dist: 1 }, needs: (t) => t.kind === "subsurface", why: "This target is not a pit or cave" },
+  { id: "life", group: "res", name: "Life-detection tests", short: "Lifeless soil", hint: "no plants, few microbes", crit: { ndvi: 1, low_biomass: 1 } },
 ];
 const problemById = (id) => PROBLEMS.find((p) => p.id === id);
 const coreIds = (pr) => pr.core || Object.keys(pr.crit);
@@ -218,22 +225,44 @@ function setProblem(id) {
   recompute();
 }
 
+// Round globe images for the destination switch (NASA Trek global mosaics, equirectangular 256 px tiles).
+const BODY_IMG = {
+  moon: "https://trek.nasa.gov/tiles/Moon/EQ/LRO_WAC_Mosaic_Global_303ppd_v02/1.0.0/default/default028mm/0/0/0.jpg",
+  mars: "https://trek.nasa.gov/tiles/Mars/EQ/Mars_Viking_MDIM21_ClrMosaic_global_232m/1.0.0/default/default028mm/0/0/0.jpg",
+};
+const testIcon = (id) => `<span class="ptile-ic" aria-hidden="true">${(typeof TEST_ICONS !== "undefined" && TEST_ICONS[id]) || ""}</span>`;
+const hasScenarioFor = (body) => S.criteria.some((c) => c.scenario && (!c.bodies || c.bodies.includes(body)));
+
 function renderSetup() {
   const bodies = [...new Set(S.targets.map((t) => t.body))];
-  $("#bodies").innerHTML = bodies.map((b) => `<button role="radio" data-body="${b}" aria-checked="${b === S.body}">${esc(BODY[b] || b)}</button>`).join("");
+  $("#bodies").innerHTML = bodies.map((b) => `<button type="button" role="radio" class="body-opt" data-body="${b}" aria-checked="${b === S.body}">`
+    + `<span class="body-orb"${BODY_IMG[b] ? ` style="--orb:url('${BODY_IMG[b]}')"` : ""} aria-hidden="true"></span><span class="body-name">${esc(BODY[b] || b)}</span></button>`).join("");
   const mine = S.targets.filter((t) => t.body === S.body), tg = [...new Set(mine.map((t) => t.group || "Targets"))];
   $("#target").innerHTML = tg.map((g) => `<optgroup label="${esc(g)}">${mine.filter((t) => (t.group || "Targets") === g)
     .map((t) => `<option value="${t.id}"${t.id === S.target.id ? " selected" : ""}>${esc(t.name)}</option>`).join("")}</optgroup>`).join("");
-  $("#target-note").textContent = S.target.mission || "";
   // the dust-storm scenario exists only where some criterion is tied to a scenario and applies to this body
-  const hasScenario = S.criteria.some((c) => c.scenario && (!c.bodies || c.bodies.includes(S.body)));
-  $("#scenario-row").hidden = !hasScenario;
-  $$("#scenarios button").forEach((b) => b.setAttribute("aria-checked", String(b.dataset.scenario === S.scenario)));
-  $("#problems").innerHTML = PROBLEMS.map((pr) => {
-    const pending = problemPending(pr), ok = problemOk(pr);
-    const why = pending ? "Data for this problem is not loaded yet" : (pr.why || "The target has no data for these criteria");
-    return `<button class="pchip${pending ? " is-pending" : ""}" data-problem="${pr.id}" aria-pressed="${S.problem === pr.id}"${ok ? "" : ` disabled title="${esc(why)}"`}>${esc(pr.name)}${pending ? "<small>soon</small>" : ""}</button>`;
-  }).join("") + `<button class="pchip pchip-all" data-problem="combined" aria-pressed="${S.problem === "combined"}"${S.coverN > 1 ? "" : " disabled"}>All combined</button>`;
+  const hasScenario = hasScenarioFor(S.body), storm = hasScenario && S.scenario === "storm";
+  const sb = $("#storm");
+  sb.hidden = !hasScenario;
+  sb.setAttribute("aria-pressed", String(storm));
+  if (!sb.innerHTML) sb.innerHTML = (typeof TEST_ICONS !== "undefined" && TEST_ICONS.storm) || "";
+  $("#target-note").innerHTML = (storm ? `<span class="storm-on">Dust storm scenario on</span>` : "") + esc(S.target.mission || "");
+  $("#target-note").title = S.target.mission || "";
+  const tile = (id, name, pressed, ok, why, pending, extra = "") =>
+    `<button type="button" class="pchip ptile${pending ? " is-pending" : ""}${extra}" data-problem="${id}" aria-pressed="${pressed}"${ok ? "" : ` disabled title="${esc(why)}"`}>`
+    + `${testIcon(id)}<span class="ptile-name">${esc(name)}</span>${pending ? "<small>soon</small>" : ""}</button>`;
+  $("#problems").innerHTML = PROBLEM_GROUPS.map((g) => {
+    const items = PROBLEMS.filter((pr) => (pr.group || "overall") === g.id).map((pr) => {
+      const pending = problemPending(pr), ok = problemOk(pr);
+      const why = pending ? "Data for this problem is not loaded yet" : (pr.why || "The target has no data for these criteria");
+      return tile(pr.id, pr.name, S.problem === pr.id, ok, why, pending);
+    });
+    if (g.id === "overall") items.push(tile("combined", "All combined", S.problem === "combined", S.coverN > 1, "Needs at least two test problems for this target", false, " pchip-all"));
+    return `<div class="pgroup" role="group" aria-label="${esc(g.name)}"><div class="pgroup-h">${esc(g.name)}</div><div class="pgroup-items">${items.join("")}</div></div>`;
+  }).join("");
+  // one-line summary shown when the test panel is collapsed
+  const curName = S.problem === "combined" ? "All combined" : S.problem === "custom" ? "Custom weights" : problemById(S.problem).name;
+  $("#tests-current").innerHTML = `${S.problem === "custom" ? "" : testIcon(S.problem)}<span class="ptile-name">${esc(curName)}</span>`;
   const pr = problemById(S.problem);
   $("#problem-note").textContent = S.problem === "combined"
     ? `The map shows how many of the ${S.coverN} test problems each place is in the top ${COVER_SHARE * 100}% of land for.`
@@ -248,10 +277,32 @@ function setScenario(sc) {
   selectTarget(S.target.id);
 }
 
+// The test panel folds to one line so the map gets the height; the choice is remembered per browser.
+const TESTS_KEY = "analogFinder.testsCollapsed";
+function setTestsCollapsed(on, save) {
+  $("#setup").classList.toggle("is-collapsed", on);
+  $("#tests-body").hidden = on;
+  $("#tests-current").hidden = !on;
+  const t = $("#tests-toggle");
+  t.setAttribute("aria-expanded", String(!on));
+  t.setAttribute("aria-label", on ? "Expand test panel" : "Collapse test panel");
+  t.title = on ? "Expand" : "Collapse";
+  if (save) { try { localStorage.setItem(TESTS_KEY, on ? "1" : "0"); } catch (e) { /* storage blocked */ } }
+  if (S.map) S.map.invalidateSize();
+}
+function initTestsCollapse() {
+  let on = false;
+  try { on = localStorage.getItem(TESTS_KEY) === "1"; } catch (e) { /* storage blocked */ }
+  setTestsCollapsed(on, false);
+  $("#tests-toggle").addEventListener("click", () => setTestsCollapsed(!$("#setup").classList.contains("is-collapsed"), true));
+  $("#tests-current").addEventListener("click", () => setTestsCollapsed(false, true));
+}
+
 function syncModeButtons() {
   $$("#view-modes button").forEach((b) => b.setAttribute("aria-checked", String(b.dataset.mode === S.mode)));
   $("#criterion-field").hidden = S.mode !== "criterion";
   $("#top-field").hidden = S.mode !== "top";
+  $("#viewctl-btn").classList.toggle("has-dot", S.mode !== "similarity");
 }
 
 // ---------- pages ----------
@@ -259,43 +310,10 @@ function setView(view) {
   S.view = view;
   $$(".mainnav button").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.view === view)));
   $("#view-explore").hidden = view !== "explore";
-  $("#view-compare").hidden = view !== "compare";
   $("#view-docs").hidden = view !== "docs";
-  $("#toolbar").hidden = view !== "explore";
-  if (view === "explore") S.map.invalidateSize();
-  if (view === "compare") renderCompare();
+  if (view === "explore") { S.map.invalidateSize(); fitMinimap(); renderMinimap(); }
+  else closeViewPanel();
   if (view === "docs" && window.renderDocs) window.renderDocs();
-}
-
-// Sites (top candidates for the current problem, plus the known analog sites) against every test problem.
-function renderCompare() {
-  const ids = coverIds(), all = S.pr.all;
-  const rows = visibleClusters().slice(0, 10).map((c) => ({ name: `Candidate site ${c.rank}`, sub: fmtCoord(c.lat, c.lon), p: c.best }));
-  S.known.forEach((k) => rows.push({
-    name: k.name, sub: `Known ${k.kind === "cave" ? "cave analog" : "analog site"} · ${k.for}`, p: posAt({ lat: k.lat, lng: k.lon }),
-  }));
-  rows.forEach((r) => {
-    r.cover = r.p >= 0 ? ids.filter((id) => S.pr[id].score[r.p] >= S.pr[id].thr).length : -1;
-    r.full = r.p >= 0 ? all.score[r.p] : -1;
-  });
-  rows.sort((a, b) => b.cover - a.cover || b.full - a.full);
-  const cell = (r, id) => {
-    if (r.p < 0) return '<td><span class="mx-cell is-na">—</span></td>';
-    const s = S.pr[id].score[r.p], top = id !== "all" && s >= S.pr[id].thr;
-    return `<td><span class="mx-cell${top ? " is-top" : ""}" style="background:${rgbCss(rampAt(s))};color:${s >= 0.62 ? "#0d1014" : "#eef1f4"}">${Math.round(s * 100)}</span></td>`;
-  };
-  const cur = S.problem === "combined" || S.problem === "custom" ? "the full match" : problemById(S.problem).name.toLowerCase();
-  $("#compare-lead").textContent = `Target: ${S.target.name}. Rows are the ten best candidate sites for ${cur} and the known analog sites. `
-    + "A high number means the place resembles the target on that test problem.";
-  $("#matrix").innerHTML = `<thead><tr><th>Site</th>${ids.map((id) => { const pr = problemById(id); return `<th title="${esc(pr.name)}">${esc(pr.short)}<small>${esc(pr.hint)}</small></th>`; }).join("")}
-    <th>Full match<small>all criteria</small></th><th>Covers<small>top ${COVER_SHARE * 100}% of land</small></th></tr></thead><tbody>${rows.map((r) => `
-    <tr data-p="${r.p}" tabindex="0"><td><b>${esc(r.name)}</b><small>${esc(r.p < 0 ? "outside the land grid" : r.sub)}</small></td>
-    ${ids.map((id) => cell(r, id)).join("")}${cell(r, "all")}<td class="mx-count">${r.cover < 0 ? "—" : `${r.cover} / ${ids.length}`}</td></tr>`).join("")}</tbody>`;
-  $$("#matrix tbody tr").forEach((tr) => {
-    const go = () => { const p = +tr.dataset.p; if (p < 0) return; setView("explore"); flyToCell(p, 4.5); showDetail(p); };
-    tr.addEventListener("click", go);
-    tr.addEventListener("keydown", (e) => { if (e.key === "Enter") go(); });
-  });
 }
 
 function topThreshold(score, share) {
@@ -354,7 +372,6 @@ function recompute() {
   renderSites();
   renderPins();
   if (S.selected !== undefined) showDetail(S.selected);
-  if (S.view === "compare") renderCompare();
 }
 
 function computeRobustness() {
@@ -430,34 +447,48 @@ function viewSpec() {
 }
 
 // ---------- map ----------
+// Web Mercator (Leaflet's default CRS) cannot show latitudes beyond ±85.0511°; markers further south sit on the edge.
+const MERC_LAT = 85.0511;
+// Dark basemap: Esri Dark Gray Canvas (CARTO dark_all now answers every tile with an "API key required" image).
+const ESRI = "https://server.arcgisonline.com/ArcGIS/rest/services/";
+const DARK_BASE = ESRI + "Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}";
+const DARK_ATTR = 'Tiles &copy; Esri &mdash; Esri, HERE, Garmin, &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+
 function initMap() {
-  // Geographic projection used by NASA GIBS (EPSG:4326, 512 px tiles)
-  const crs = L.extend({}, L.CRS.EPSG4326, {
-    transformation: new L.Transformation(1, 180, -1, 90),
-    scale: (z) => Math.pow(2, z) / 0.5625,
-    zoom: (s) => Math.log(s * 0.5625) / Math.LN2,
+  // a little horizontal slack so sites near the date line can still be centred beside the detail panel
+  S.map = L.map("map", {
+    center: [20, 10], zoom: 2, minZoom: 2, maxZoom: 18, zoomSnap: 0.25, zoomControl: false, worldCopyJump: false,
+    maxBounds: [[-MERC_LAT, -225], [MERC_LAT, 225]], maxBoundsViscosity: 1,
   });
-  const bounds = [[-90, -180], [90, 180]];
-  // loose pan limits so sites near the date line or the poles can still be centred beside the detail panel
-  S.map = L.map("map", { crs, center: [0, 0], zoom: 1, minZoom: 0, maxZoom: 7, maxBounds: [[-110, -240], [110, 240]], zoomSnap: 0.25, zoomControl: false });
   L.control.zoom({ position: "topright" }).addTo(S.map);
-  S.map.fitBounds(bounds, { padding: [4, 4] });
-  window.addEventListener("resize", () => S.map.invalidateSize());
-  const gibs = "https://gibs.earthdata.nasa.gov/wmts/epsg4326/best/";
-  const opts = { tileSize: 512, bounds, noWrap: true };
-  // coastlines sit above the score layer so shapes stay readable at any opacity
-  const coastPane = S.map.createPane("coast");
-  coastPane.style.zIndex = 450; coastPane.style.pointerEvents = "none";
-  const attr = 'Basemap: <a href="https://nasa-gibs.github.io/gibs-api-docs/">NASA GIBS</a>';
+  // the View / Basemap button sits right below the zoom buttons
+  const ViewControl = L.Control.extend({
+    onAdd() {
+      const el = $("#viewctl");
+      L.DomEvent.disableClickPropagation(el);
+      L.DomEvent.disableScrollPropagation(el);
+      return el;
+    },
+  });
+  new ViewControl({ position: "topright" }).addTo(S.map);
+  window.addEventListener("resize", () => { S.map.invalidateSize(); if (S.mini) { S.mini.invalidateSize(); fitMinimap(); renderMinimap(); } });
+
+  // place labels sit above the score layer so names stay readable at any opacity
+  const labelPane = S.map.createPane("labels");
+  labelPane.style.zIndex = 450; labelPane.style.pointerEvents = "none";
+  const esriAttr = "Tiles &copy; Esri &mdash; Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community";
   S.base = {
-    satellite: [L.tileLayer(gibs + "BlueMarble_ShadedRelief_Bathymetry/default/2004-08-01/500m/{z}/{y}/{x}.jpeg", { ...opts, maxNativeZoom: 7, attribution: attr + " Blue Marble" })],
-    relief: [
-      L.tileLayer(gibs + "ASTER_GDEM_Greyscale_Shaded_Relief/default/2004-08-01/31.25m/{z}/{y}/{x}.jpg", { ...opts, maxNativeZoom: 7, attribution: attr + " ASTER GDEM shaded relief", className: "relief-tiles" }),
-      L.tileLayer(gibs + "Coastlines_15m/default/2004-08-01/15.625m/{z}/{y}/{x}.png", { ...opts, maxNativeZoom: 7, pane: "coast", opacity: 0.6 }),
+    dark: [
+      L.tileLayer(DARK_BASE, { maxZoom: 18, maxNativeZoom: 16, attribution: DARK_ATTR }),
+      L.tileLayer(ESRI + "Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}", { maxZoom: 18, maxNativeZoom: 16, pane: "labels" }),
     ],
-    dark: [L.tileLayer(gibs + "Coastlines_15m/default/2004-08-01/15.625m/{z}/{y}/{x}.png", { ...opts, maxNativeZoom: 7, pane: "coast", className: "coast-dark", attribution: attr + " coastlines" })],
+    satellite: [
+      L.tileLayer(ESRI + "World_Imagery/MapServer/tile/{z}/{y}/{x}", { maxZoom: 18, attribution: esriAttr }),
+      L.tileLayer(ESRI + "Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}", { maxZoom: 18, pane: "labels" }),
+    ],
+    terrain: [L.tileLayer(ESRI + "World_Topo_Map/MapServer/tile/{z}/{y}/{x}", { maxZoom: 18, attribution: "Tiles &copy; Esri" })],
   };
-  setBasemap("dark");
+  setBasemap("satellite");
 
   S.map.on("click", (e) => { const p = posAt(e.latlng); if (p >= 0) showDetail(p); });
   S.map.on("mousemove", (e) => showTooltip(e));
@@ -469,27 +500,110 @@ function initMap() {
     : L.circleMarker([k.lat, k.lon], { radius: 5, color: "#0d1014", weight: 2, fillColor: "#ffffff", fillOpacity: 1 })
   ).bindTooltip(`<b>${esc(k.name)}</b><br>${k.kind === "cave" ? "Known cave analog" : "Known analog site"} · ${esc(k.for)}`))).addTo(S.map);
   S.pinLayer = L.layerGroup().addTo(S.map);
+  initMinimap();
 }
 
 function setBasemap(name) {
   Object.values(S.base).flat().forEach((l) => S.map.hasLayer(l) && S.map.removeLayer(l));
   S.base[name].forEach((l) => l.addTo(S.map));
+  $$("#basemaps button").forEach((b) => b.setAttribute("aria-checked", String(b.dataset.basemap === name)));
   if (S.overlay) S.overlay.bringToFront();
 }
 
+// ---------- view / basemap popover ----------
+function openViewPanel(open) {
+  $("#viewctl-panel").hidden = !open;
+  $("#viewctl-btn").setAttribute("aria-expanded", String(open));
+}
+function closeViewPanel() { if (!$("#viewctl-panel").hidden) openViewPanel(false); }
+
+// ---------- minimap ("Fast travel") ----------
+function initMinimap() {
+  S.mini = L.map("minimap", {
+    zoomControl: false, attributionControl: false, dragging: false, touchZoom: false, scrollWheelZoom: false,
+    doubleClickZoom: false, boxZoom: false, keyboard: false, zoomSnap: 0, minZoom: -2, maxZoom: 4, inertia: false,
+  });
+  // The minimap zoom is fractional and slightly negative, so minZoom must go below 0 or the layer drops its tiles.
+  // Zoom-1 tiles drawn at 128 px stay sharp on high-density screens.
+  L.tileLayer(DARK_BASE, { noWrap: true, minZoom: -2, tileSize: 128, zoomOffset: 1 }).addTo(S.mini);
+  // the minimap uses the dark tiles whatever the main basemap is, so credit them on the main map too
+  S.map.attributionControl.addAttribution(DARK_ATTR);
+  fitMinimap();
+  S.miniView = L.rectangle([[0, 0], [1, 1]], { color: "#e8a33d", weight: 1.5, fillColor: "#e8a33d", fillOpacity: 0.06, interactive: false }).addTo(S.mini);
+  S.miniKnown = L.layerGroup().addTo(S.mini);
+  S.miniPins = L.layerGroup().addTo(S.mini);
+  S.mini.on("click", (e) => S.map.panTo(e.latlng));
+  S.map.on("move zoomend", syncMinimap);
+  $("#minimap-card").addEventListener("toggle", () => {
+    if ($("#minimap-card").open) { S.mini.invalidateSize(); fitMinimap(); renderMinimap(); }
+  });
+}
+
+// whole world across the card width (zoom may be fractional, e.g. 240 px wide -> zoom ≈ −0.09)
+function fitMinimap() {
+  if (!S.mini) return;
+  const w = S.mini.getSize().x || 240;
+  S.mini.setView([0, 0], Math.log2(w / 256), { animate: false });
+}
+
+// Keep points inside the visible part of the minimap (it shows roughly ±78° of latitude).
+function miniLat(lat) {
+  const b = S.mini.getBounds(), m = (b.getNorth() - b.getSouth()) * 0.04;
+  return Math.max(b.getSouth() + m, Math.min(b.getNorth() - m, lat));
+}
+
+function syncMinimap() {
+  if (!S.mini || !S.miniView) return;
+  const b = S.map.getBounds();
+  const s = miniLat(b.getSouth()), n = miniLat(b.getNorth());
+  const w = Math.max(-180, b.getWest()), e = Math.min(180, b.getEast());
+  // never smaller than 8 px, so a deep zoom still shows where you are
+  const p1 = S.mini.latLngToContainerPoint([n, w]), p2 = S.mini.latLngToContainerPoint([s, e]);
+  const c = p1.add(p2).divideBy(2), hw = Math.max(4, (p2.x - p1.x) / 2), hh = Math.max(4, (p2.y - p1.y) / 2);
+  S.miniView.setBounds([S.mini.containerPointToLatLng([c.x - hw, c.y - hh]), S.mini.containerPointToLatLng([c.x + hw, c.y + hh])]);
+}
+
+function renderMinimap() {
+  if (!S.mini || !S.clusters) return;
+  S.miniKnown.clearLayers();
+  S.known.forEach((k) => L.circleMarker([miniLat(k.lat), k.lon], {
+    radius: 2.2, stroke: false, fillColor: "#ffffff", fillOpacity: 0.9, interactive: false,
+  }).addTo(S.miniKnown));
+  S.miniPins.clearLayers();
+  visibleClusters().slice(0, TOP_PINS).forEach((c, i) => {
+    L.marker([miniLat(c.lat), c.lon], {
+      icon: L.divIcon({ className: "", html: `<div class="mini-pin">${c.rank}</div>`, iconSize: [16, 16], iconAnchor: [8, 8] }),
+      keyboard: false, title: `Site ${c.rank}: ${fmtCoord(c.lat, c.lon)}`, zIndexOffset: 1000 - i,
+    }).on("click", () => { flyToCell(c.best, 6); showDetail(c.best); }).addTo(S.miniPins);
+  });
+  syncMinimap();
+}
+
+// The score grid is equirectangular (0.5° rows). Web Mercator stretches rows towards the poles, so the canvas
+// rows are spaced evenly in Mercator y between ±85.0511° and each one samples the grid row at its latitude.
 function renderOverlay() {
-  const { nlat, nlon } = S.grid, spec = viewSpec();
-  const cv = document.createElement("canvas"); cv.width = nlon; cv.height = nlat;
-  const ctx = cv.getContext("2d"), img = ctx.createImageData(nlon, nlat);
+  const { nlat, nlon, res } = S.grid, spec = viewSpec();
+  const src = new Uint8ClampedArray(nlat * nlon * 4);   // grid colours, row 0 = southernmost
   S.grid.cells.forEach((idx, p) => {
     const v = spec.value(p);
     if (v === null) return;
-    const i = Math.floor(idx / nlon), j = idx % nlon, o = ((nlat - 1 - i) * nlon + j) * 4, [r, g, b] = rampAt(v);
-    img.data[o] = r; img.data[o + 1] = g; img.data[o + 2] = b; img.data[o + 3] = spec.alpha(v);
+    const o = idx * 4, [r, g, b] = rampAt(v);
+    src[o] = r; src[o + 1] = g; src[o + 2] = b; src[o + 3] = spec.alpha(v);
   });
+  const W = nlon, H = 2 * nlon;
+  const cv = document.createElement("canvas"); cv.width = W; cv.height = H;
+  const ctx = cv.getContext("2d"), img = ctx.createImageData(W, H);
+  const s32 = new Uint32Array(src.buffer), d32 = new Uint32Array(img.data.buffer);
+  const yTop = Math.log(Math.tan(Math.PI / 4 + MERC_LAT * Math.PI / 360));
+  for (let r = 0; r < H; r++) {
+    const y = yTop * (1 - 2 * (r + 0.5) / H);
+    const lat = (2 * Math.atan(Math.exp(y)) - Math.PI / 2) * 180 / Math.PI;
+    const i = Math.floor((lat + 90) / res);
+    if (i >= 0 && i < nlat) d32.set(s32.subarray(i * nlon, (i + 1) * nlon), r * W);
+  }
   ctx.putImageData(img, 0, 0);
   if (S.overlay) S.map.removeLayer(S.overlay);
-  S.overlay = L.imageOverlay(cv.toDataURL(), [[-90, -180], [90, 180]], { opacity: +$("#opacity").value, interactive: false }).addTo(S.map);
+  S.overlay = L.imageOverlay(cv.toDataURL(), [[-MERC_LAT, -180], [MERC_LAT, 180]], { opacity: +$("#opacity").value, interactive: false }).addTo(S.map);
   renderBubbles();
   renderLegend(spec);
 }
@@ -520,12 +634,13 @@ function renderLegend(spec) {
 
 function renderPins() {
   S.pinLayer.clearLayers();
+  renderMinimap();
   if (!$("#show-ranks").checked) return;
   visibleClusters().slice(0, TOP_PINS).forEach((c) => {
     L.marker([c.lat, c.lon], {
       icon: L.divIcon({ className: "", html: `<div class="rank-pin">${c.rank}</div>`, iconSize: [22, 22], iconAnchor: [11, 11] }),
       keyboard: false, title: `Site ${c.rank}`,
-    }).on("click", () => { flyToCell(c.best, Math.max(S.map.getZoom(), 4)); showDetail(c.best); }).addTo(S.pinLayer);
+    }).on("click", () => { flyToCell(c.best, Math.max(S.map.getZoom(), 6)); showDetail(c.best); }).addTo(S.pinLayer);
   });
 }
 
@@ -580,7 +695,7 @@ function renderSites() {
     </li>`;
   }).join("") || `<li class="empty">No sites match these filters.</li>`;
   $$("#sites .site").forEach((li) => {
-    const go = () => { const p = +li.dataset.p; flyToCell(p, 4.5); showDetail(p); };
+    const go = () => { const p = +li.dataset.p; flyToCell(p, 6); showDetail(p); };
     li.addEventListener("click", go);
     li.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } });
   });
@@ -796,11 +911,14 @@ async function load() {
     if (b && b.dataset.body !== S.body) selectTarget(S.targets.find((t) => t.body === b.dataset.body).id);
   });
   $("#problems").addEventListener("click", (e) => { const b = e.target.closest("[data-problem]"); if (b && !b.disabled) setProblem(b.dataset.problem); });
-  $("#scenarios").addEventListener("click", (e) => { const b = e.target.closest("[data-scenario]"); if (b) setScenario(b.dataset.scenario); });
+  $("#storm").addEventListener("click", () => setScenario(S.scenario === "storm" ? "normal" : "storm"));
+  initTestsCollapse();
   $$(".mainnav button").forEach((b) => b.addEventListener("click", () => setView(b.dataset.view)));
   $("#criterion").onchange = (e) => { S.criterion = e.target.value; renderOverlay(); };
   $("#top-share").onchange = (e) => { S.topShare = +e.target.value; renderOverlay(); };
-  $("#basemap").onchange = (e) => setBasemap(e.target.value);
+  $$("#basemaps button").forEach((b) => b.addEventListener("click", () => setBasemap(b.dataset.basemap)));
+  $("#viewctl-btn").addEventListener("click", () => openViewPanel($("#viewctl-panel").hidden));
+  document.addEventListener("pointerdown", (e) => { if (!e.target.closest("#viewctl")) closeViewPanel(); });
   $("#opacity").oninput = (e) => S.overlay && S.overlay.setOpacity(+e.target.value);
   $$("#view-modes button").forEach((b) => b.addEventListener("click", () => setMode(b.dataset.mode)));
   $$(".tabs button").forEach((b) => b.addEventListener("click", () => {
@@ -811,9 +929,18 @@ async function load() {
   $("#only-new").onchange = () => { renderSites(); renderPins(); renderBubbles(); };
   $("#show-ranks").onchange = renderPins;
   $("#show-known").onchange = (e) => (e.target.checked ? S.knownLayer.addTo(S.map) : S.map.removeLayer(S.knownLayer));
-  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("#detail").hidden) closeDetail(); });
-  if (window.matchMedia("(max-width: 560px)").matches) $("#legend").open = false;
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    if (!$("#viewctl-panel").hidden) { closeViewPanel(); $("#viewctl-btn").focus(); } else if (!$("#detail").hidden) closeDetail();
+  });
+  // a short map has no room for both the legend (top-left) and the minimap (bottom-left)
+  if (window.matchMedia("(max-width: 560px)").matches || $(".map-wrap").clientHeight < 520) $("#legend").open = false;
   S.target = S.targets[0];
   selectTarget(S.targets[0].id);
   $("#loading").hidden = true;
+  // deep links: #method opens the Method and data page; #at=lat,lon,zoom positions the map
+  const hash = decodeURIComponent(location.hash.slice(1));
+  if (hash === "method") setView("docs");
+  const at = /^at=(-?[\d.]+),(-?[\d.]+),(\d+(?:\.\d+)?)$/.exec(hash);
+  if (at) S.map.setView([+at[1], +at[2]], +at[3], { animate: false });
 })();
