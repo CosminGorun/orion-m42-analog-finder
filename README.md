@@ -71,7 +71,7 @@ Apoi deschide http://localhost:8765.
 
 Criteriile pe care o țintă nu le are (de exemplu temperaturile pe Marte) sunt marcate „not applicable” și nu intră în scor.
 
-## Cum adaugi o țintă nouă
+## Cum adaugi o țintă noua
 
 1. Adaugă în `pipeline/targets.json` un obiect cu `id`, `name`, `body` (`moon` sau `mars`), `kind` (`surface` sau `subsurface`), `group`, `lat`, `lon`, `window_km`. Valorile din literatură (ex. temperatura din interiorul gropii) merg în `literature`.
 2. Rulează `pipeline/build_target.py`.
