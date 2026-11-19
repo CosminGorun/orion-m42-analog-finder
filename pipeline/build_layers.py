@@ -23,7 +23,7 @@ One layer = one module in pipeline/layers/ with this contract:
 
 The merge is idempotent: criteria coming from layers are replaced on every run.
 """
-from pathlib import Path
+from pathlib import Path  
 import importlib
 import json
 import pkgutil
